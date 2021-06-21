@@ -1,0 +1,89 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{DOI \discretionary{}{}{}#1}\else
+  \providecommand{\doi}{DOI \discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+
+\bibitem{Scala:2020aa}
+A.~Scala, A.~Flori, A.~Spelta, E.~Brugnoli, M.~Cinelli, W.~Quattrociocchi,
+  F.~Pammolli, Scientific Reports \textbf{10}(1), 13764 (2020).
+\newblock \doi{10.1038/s41598-020-70631-9}.
+\newblock \urlprefix\url{https://doi.org/10.1038/s41598-020-70631-9}
+
+\bibitem{doi:10.1142/S0218202520500323}
+N.~Bellomo, R.~Bingham, M.A.J. Chaplain, G.~Dosi, G.~Forni, D.A. Knopoff,
+  J.~Lowengrub, R.~Twarock, M.E. Virgillito, Mathematical Models and Methods in
+  Applied Sciences \textbf{30}(08), 1591 (2020).
+\newblock \urlprefix\url{https://doi.org/10.1142/S0218202520500323}
+
+\bibitem{rahmandad2008heterogeneity}
+H.~Rahmandad, J.~Sterman, Management Science \textbf{54}(5), 998 (2008)
+
+\bibitem{squazzoni2020}
+F.~Squazzoni, J.G. Polhill, B.~Edmonds, P.~Ahrweiler, P.~Antosz, G.~Scholz,
+  E.~Chappin, M.~Borit, H.~Verhagen, F.~Giardini, N.~Gilbert, Journal of
+  Artificial Societies and Social Simulation \textbf{23}(2), 10 (2020).
+\newblock \doi{10.18564/jasss.4298}.
+\newblock \urlprefix\url{http://jasss.soc.surrey.ac.uk/23/2/10.html}
+
+\bibitem{epstein2008model}
+J.~Epstein, Journal of Artificial Societies and Social Simulation
+  \textbf{11}(4), 12 (2008).
+\newblock \urlprefix\url{http://jasss.soc.surrey.ac.uk/11/4/12.html}
+
+\bibitem{axtell2000agents}
+R.~Axtell, {Why agents? On the varied motivations for agent computing in the
+  social sciences}.
+\newblock Tech. rep., Center on Social and Economic Dynamics Brookings
+  Institution (2000)
+
+\bibitem{Silvagno_2020}
+F.~Silvagno, A.~Vernone, G.P. Pescarmona, Antioxidants \textbf{9}(7), 624
+  (2020).
+\newblock \doi{10.3390/antiox9070624}.
+\newblock \urlprefix\url{http://dx.doi.org/10.3390/antiox9070624}
+
+\bibitem{horton2020offline}
+R.~Horton, Lancet (London, England) \textbf{396}(10255), 874 (2020).
+\newblock
+  \urlprefix\url{https://www.thelancet.com/action/showPdf?pii=S0140-6736\%2820\%2932000-6}
+
+\bibitem{SIsaR}
+P.~Terna, G.~Pescarmona, A.~Acquadro, P.~Pescarmona, G.~Russo, S.~Terna.
+\newblock {SIsaR, An Agent-Based Model of the Diffusion of Covid-19 Using
+  NetLogo, with Susceptible, Infected, symptomatic, asymptomatic, and Recovered
+  People} (2020).
+\newblock \urlprefix\url{https://terna.to.it/simul/SIsaR.html}
+
+\bibitem{NetLogo}
+U.~Wilensky.
+\newblock Netlogo (1999).
+\newblock \urlprefix\url{http://ccl.northwestern.edu/netlogo/}
+
+\bibitem{ghorbani2020assocc}
+A.~Ghorbani, F.~Lorig, B.~de~Bruin, P.~Davidsson, F.~Dignum, V.~Dignum,
+  M.~van~der Hurk, M.~Jensen, C.~Kammler, K.~Kreulen, et~al., Review of
+  Artificial Societies and Social Simulation  (2020).
+\newblock
+  \urlprefix\url{https://rofasss.org/2020/04/25/the-assocc-simulation-model/}
+
+\bibitem{steinmann2020don}
+P.~Steinmann, J.R. Wang, G.A. van Voorn, J.H. Kwakkel, Review of Artificial
+  Societies and Social Simulation \textbf{17} (2020).
+\newblock \urlprefix\url{https://rofasss.org/2020/04/17/deep-uncertainty/}
+
+\bibitem{pescarmonacan}
+G.~Pescarmona, P.~Terna, A.~Acquadro, P.~Pescarmona, G.~Russo, S.~Terna,
+  RofASSS  (2020).
+\newblock \urlprefix\url{https://rofasss.org/2020/10/20/sisar/}
+
+\bibitem{doi:10.1111/ijcp.13674}
+D.~Miles, M.~Stedman, A.H. Heald, International Journal of Clinical Practice
+  \textbf{n/a}(n/a), e13674 (2020).
+\newblock \doi{10.1111/ijcp.13674}.
+\newblock
+  \urlprefix\url{https://onlinelibrary.wiley.com/doi/abs/10.1111/ijcp.13674}
+
+\end{thebibliography}
