@@ -1,0 +1,1925 @@
+%%%%%%%%%%%%%%%%%%%% author.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% sample root file for your "contribution" to a contributed volume
+%
+% Use this file as a template for your own input.
+%
+%%%%%%%%%%%%%%%% Springer %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% RECOMMENDED %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[graybox]{svmult}
+
+% choose options for [] as required from the list
+% in the Reference Guide
+
+\usepackage{type1cm}        % activate if the above 3 fonts are
+                            % not available on your system
+%
+\usepackage{makeidx}         % allows index generation
+\usepackage{graphicx}        % standard LaTeX graphics tool
+                             % when including figure files
+\usepackage{multicol}        % used for the two-column index
+\usepackage[bottom]{footmisc}% places footnotes at page bottom
+
+
+\usepackage{newtxtext}       % 
+\usepackage{newtxmath}       % selects Times Roman as basic font
+
+\usepackage{url} % Use the package "url.sty" to avoid problems with special characters used in your e-mail or web address
+
+% MY ADDENDA
+\usepackage{enumitem} %roman numbers
+\usepackage[super]{nth} % for dates
+\usepackage{verbatim}   % \begin and \end {comment}
+\usepackage{hyperref}   % to use \href
+
+
+
+% see the list of further useful packages
+% in the Reference Guide
+
+\makeindex             % used for the subject index
+                       % please use the style svind.ist with
+                       % your makeindex program
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\title*{An Agent-Based Model of COVID-19 Diffusion to Plan and Evaluate Intervention Policies}
+\titlerunning{An Agent-Based Model of COVID-19 Diffusion}
+% Use \titlerunning{Short Title} for an abbreviated version of
+% your contribution title if the original one is too long
+\author{Gianpiero Pescarmona, Pietro Terna, Alberto Acquadro, Paolo Pescarmona, Giuseppe Russo, Emilio Sulis, and Stefano Terna}
+ \authorrunning{G. Pescarmona, P. Terna \textit{et al.}}
+% Use \authorrunning{Short Title} for an abbreviated version of
+% your contribution title if the original one is too long
+\institute{G. Pescarmona \at University of Torino, Italy, \email{gianpiero.pescarmona@unito.it}
+\and P. Terna \at University of Torino, Italy; Fondazione Collegio Carlo Alberto, Italy \email{pietro.terna@unito.it}
+\and A. Acquadro \at University of Torino, Italy \email{alberto.acquadro@unito.it}
+\and P. Pescarmona \at University of Groningen, The Netherlands \email{p.p.pescarmona@rug.nl}
+\and G. Russo \at Centro Einaudi, Torino, Italy \email{russo@centroeinaudi.it}
+\and E. Sulis \at University of Torino, Italy; \email{emilio.sulis@unito.it}
+\and S. Terna \at \url{tomorrowdata.io} \email{stefano.terna@tomorrowdata.io}
+}
+%
+% Use the package "url.sty" to avoid
+% problems with special characters
+% used in your e-mail or web address
+%
+\maketitle
+
+\abstract*{A model of interacting agents, following plausible behavioral rules into a world where the Covid-19 epidemic is affecting the actions of everyone. The model works with (i) infected agents categorized as symptomatic or asymptomatic and (ii) the places of contagion specified in a detailed way. The infection transmission is related to three factors: the infected person's characteristics and the susceptible one, plus those of the space in which contact occurs. The model includes the structural data of Piedmont, an Italian region, but we can easily calibrate it for other areas. The micro-based structure of the model allows factual, counterfactual, and conditional simulations to investigate both the spontaneous or controlled development of the epidemic.\newline\indent
+The model is generative of complex epidemic dynamics emerging from the consequences of agents' actions and interactions, with high variability in outcomes, but frequently with a stunning realistic reproduction of the successive contagion waves in the reference region. 
+There is also an inverse generative side of the model, coming from constructing a meta-agent optimizing the vaccine distribution among people groups---characterized by age, fragility, work conditions---to minimize the number of symptomatic people, using genetic algorithms.}
+
+\abstract{A model of interacting agents, following plausible behavioral rules into a world where the Covid-19 epidemic is affecting the actions of everyone. The model works with (i) infected agents categorized as symptomatic or asymptomatic and (ii) the places of contagion specified in a detailed way. The infection transmission is related to three factors: the infected person's characteristics and the susceptible one, plus those of the space in which contact occurs. The model includes the structural data of Piedmont, an Italian region, but we can easily calibrate it for other areas. The micro-based structure of the model allows factual, counterfactual, and conditional simulations to investigate both the spontaneous or controlled development of the epidemic.\newline\indent
+The model is generative of complex epidemic dynamics emerging from the consequences of agents' actions and interactions, with high variability in outcomes, but frequently with a stunning realistic reproduction of the successive contagion waves in the reference region. 
+There is also an inverse generative side of the model, coming from constructing a meta-agent optimizing the vaccine distribution among people groups---characterized by age, fragility, work conditions---to minimize the number of symptomatic people, using genetic algorithms.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{A quick introduction to epidemic modeling}
+\label{intro}
+
+The starting point from which we built our model is that of S.I.R compartmental models with Susceptible, Infected, and Recovered people. This approach allows looking at the epidemic dynamics, but on a macro scale. While the Covid-19 epidemic was spreading, there have been several attempts to introduce more realistic compartmental subdivisions. A relevant example in this direction is that of \cite{Scala:2020aa}. The research also been followed other work lines, as in \cite{doi:10.1142/S0218202520500323}, where a multiscale framework accounts for the interaction of different spatial levels, from the small scale of the virus itself and cells, to the large scale of individuals and further up to the collective behavior of populations.
+
+Following \cite{rahmandad2008heterogeneity}, we know that the analysis based on the assumption of  heterogeneity strongly differs from S.I.R. compartmental structures modeled by differential equations. Their work ponders when it is better to use agent-based models and when it would be better to use differential equation models. Differential equation models assume homogeneity and perfect mixing within compartments, while agent-based models can capture heterogeneity in agent attributes and the structure of their interactions. We follow the second approach.
+
+Finally, we subscribe the call of \cite{squazzoni2020} to <<cover the full behavioural and social complexity of societies under pandemic crisis>> and we move in that directionin our work reported here. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Why model? Why agents? Why another model?}
+\label{why}
+
+Why another model, and most of all, with \cite{epstein2008model}, why model? With the author, the reply is: 
+\begin{quote}
+The choice (\ldots) is not whether to build models; it's whether to build explicit ones. In explicit models, assumptions are laid out in detail, so we can study exactly what they entail. On these assumptions, this sort of thing happens. When you alter the assumptions that is what happens. By writing explicit models, you let others replicate your results.
+\end{quote}
+
+And, strongly:
+\begin{quote} 
+I am always amused when these same people challenge me with the question,``Can you validate your model'' The appropriate retort, of course, is,``Can you validate yours?'' At least I can write mine down so that it can, in principle, be calibrated to data, if that is what you mean by ``validate'' a term I assiduously avoid.
+\end{quote}
+
+To reply to ``why agents?'', with \cite{axtell2000agents} we define in short what an agent-based model is:
+\begin{quote} 
+An agent-based model consists of individual agents, commonly implemented in software as objects. Agent objects have states and rules of behavior. Running such a model simply amounts to instantiating an agent population, letting the agents interact, and monitoring what happens. That is, executing the model---spinning it forward in time---is all that is necessary in order to ``solve'' it.
+\end{quote}
+
+More in detail:
+\begin{quote} 
+There are, ostensibly, several advantages of agent-based computational modeling over conventional mathematical theorizing. First, as described above, it is easy to limit agent rationality in agent-based computational models. Second, even if one wishes to use completely rational agents, it is a trivial matter to make agents heterogeneous in agent-based models. One simply instantiates a population having some distribution of initial states, e.g., preferences. That is, there is no need to appeal to representative agents. Third, since the model is ``solved'' merely by executing it, there results an entire dynamical history of the process under study. That is, one need not focus exclusively on the equilibria, should they exist, for the dynamics are an inescapable part of running the agent model. Finally, in most social processes either physical space or social networks matter. These are difficult to account for mathematically except in highly stylized ways. However, in agent-based models it is usually quite easy to have the agent interactions mediated by space or networks or both.
+\end{quote}
+
+And now, "why another?" As a commitment to our creativity, using our knowledge to understand what is happening. Indeed, with arbitrariness: it is up to others and time to judge. Modeling the Covid-19 pandemic requires a scenario and the actors.
+As in every play, the author defines the roles of the actors and the environment. The characters are not real, they are pre-built by the author, and they act according to their peculiar constraints. If the play is successful, they will play for a long time, even centuries. If not, we will rapidly forget them. Shakespeare Hamlet is still playing after centuries, even if he is entirely imaginary.
+
+The same holds for our simulations: we are the authors, we arbitrarily define the characters, we force them to act again and again in different scenarios. In both plays and simulations, we compress the time: whole life to 2 or 3 hours on the stage. In a few seconds, we run the Covid-19 pandemic spread in a given regional area.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Our model}
+\label{ourModel}
+
+With our model, we move from a macro compartmental vision to a meso and microanalysis capability. Its main characteristics are:
+
+\begin{itemize}
+
+\item
+scalability: we take in account the interactions between virus and molecules inside the host, the interactions between individuals in more or less restricted contexts, the movement between different environments (home, school, workplace, open spaces, shops, \ldots);\footnote{In a second version, we will add transportations and long trips between regions/countries; discotheques; other social aggregation, as football events.}
+
+in detail, the scales are: 
+
+\begin{itemize}
+\setlength\itemsep{0.3em}
+\item
+	\emph{micro}, with the internal biochemical mechanism involved in reacting to the virus, as in \cite{Silvagno_2020}, from where we derive the critical importance assigned to an individual attribute of intrinsic susceptibility related to the age and previous morbidity episodes; the model indeed incorporates the medical insights and consistent perspectives of one of its co-authors, former full professor of clinical biochemistry, signing also the quoted article; a comment on Lancet \cite{horton2020offline} consistently signals the syndemic character of the current event: <<Two categories of disease are interacting within specific populations---infection with severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) and an array of non-communicable diseases (NCDs)>>;
+\item
+	\emph{meso}, with the open and closed contexts where the agents behave, as reported above;
+\item	
+	\emph{macro}, with the emergent effects of the actions of the agents;
+	
+\end{itemize}
+
+\item
+granularity: at any level, the interactions are partially random and therefore the final results will always reflect the sum of the randomness at the different levels; changing the constraints at different levels and running multiple simulations should allow the identification of the most critical points, where to focus the intervention.
+
+\end{itemize}
+
+Summing up, S.I.s.a.R. \cite{SIsaR} is an agent-based model designed to reproduce the diffusion of the COVID-19 using agent-based modeling in NetLogo \cite{NetLogo}. We have Susceptible, Infected, symptomatic, asymptomatic, and Recovered people: hence the name S.I.s.a.R.. The scheme comes from S.I.R. models, herewith (i) infected agents categorized as symptomatic and asymptomatic and (ii) the places of contagions specified in a detailed way, thanks to agent-based modeling capabilities. The model includes Piedmont's structural data, an Italian region, but we can quite easily calibrate it for other areas. It can reproduce the events following a realistic calendar (e.g., national or local government decisions, as in Appendix \ref{appCalendar}), via its script interpreter.\footnote{\label{modOnLine}The model is online at \url{https://terna.to.it/simul/SIsaR.html}, from where it is also possible to run the code without installation. Corresponding author: Pietro Terna: \url{mailto:pietro.terna@unito.it}. Looking at the \emph{info} sheet of the model, you have more than 20 pages of Supporting Information about both the structure and the calibration of the model.}
+
+We place two initial infected individuals in a population of 4350 individuals, on a scale of 1:1000 with Piedmont.\footnote{They appear as black segments in the sequences of Appendix \ref{appContagion}.} The size of the initial infected group is out of scale: it is the smallest number, ensuring the epidemic's activation in a substantial number of cases. Initial infected people bypass the incubation period. For implausibility reasons, we never choose initial infected people among persons in nursing homes or hospitals. The presence of agents in close space---such as classrooms, factories, homes, hospitals, nursing homes---is made with realistic numbers, not to be read in scale: e.g., a classroom contains 25 students, a home two persons, etc.; the movements occur in different parts of the daily life, as in \cite{ghorbani2020assocc}.
+
+We can set: 
+\begin{itemize}
+\setlength\itemsep{0.3em}
+\item min and max duration of the individual infection;
+
+\item the length of the incubation interval;
+
+\item the critical distance, as the radius of a circle affecting people which are in it, with a given probability;
+
+\item the correction of that probability, due to the personal characteristics of both active and the passive agents; passive agents, as receivers, can be robust, regular, fragile, and extra fragile.
+
+\end{itemize} 
+
+We have two main types of contagion: (a) within a radius, for people moving around, also if only temporary present in a house/factory/nursing home/hospital (in schools we only have students and teachers); (b) in a given space (room or apartment) for people resident in their home or in a hospital or in a nursing home or being in school or in a working environment.
+
+People in hospitals and nursing homes can be infected in two ways: (a) and (b). Instead, while people are at school, they can only receive the disease from people in the same classroom, where only teachers and students are present, so this is a third infection mechanism (c).
+
+One should remark that workplaces are open to all persons, as clients, vendors, suppliers, external workers can go there. In contrast, schools are mainly reserved for students and school operators and are less affected by contact with other types of agents.
+
+All agents have their home, inside a city, or a town. The agents also have a regular place (RP) where they act and interact, moving around. These positions can be interpreted as free time elective places. When we activate the school, students and teachers have both RPs and the schools; healthcare operators have both RPs and hospitals or nursing homes; finally, workers have both RPs and working places. In each day (or tick of the model), we simulated realistic sequences of actions.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{How S.I.s.a.R. works}
+\label{howWorks}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{A day of the simulation}\label{aDay}
+
+Figure \ref{outline} describes what happens during every day in our simulated world.
+
+\begin{figure}[t]
+\center
+\includegraphics[width=1\textwidth,,angle=0]{SIsaR_outline.png} %}
+\caption{A day in the simulation, with $N$ repetition where $N$ is the duration of a specific outbreak; look at Section \ref{cond} for the conditional actions,  Section \ref{par} for the parameters, and Section \ref{inter} for details on the interactions}
+\label{outline}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Conditional actions}
+\label{cond}
+
+\begin{description}
+
+\item [condition I] Symptomatic persons are at home or in a hospital or a nursing home and do not move. 
+
+\item [condition II] People not constrained by \emph{condition I} can move if (basic rule) no limitations/lockdown \emph{OR} one of the following situations:
+
+\begin{enumerate}
+\item hospital healthcare operators, nursing home healthcare operators;
+
+\item all people as \verb|%PeopleAnyTypeNotSymptomaticLeavingHome| 
+(\ref{par}, \ref{p3});
+
+\item regular people as \verb|%PeopleNotFragileNotSymptomaticLeavingHome|
+(\ref{par}, \ref{p4};
+
+\item workers following \verb|%openFactoriesWhenLimitationsOn|
+(\ref{par}, \ref{p5});
+
+\item teachers if \verb|activateSchool| is $true$
+(\ref{par}, \ref{p6});
+
+\item students if \verb|activateSchool| is $true$ with \%students $>0$
+(\ref{par}, \ref{p7}).
+
+\end{enumerate}
+
+\end{description}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Parameters}\label{par}
+
+In round brackets we report the short names if used in program scripts. About the days, please interpolate the dates of Table \ref{dates}.
+
+\begin{enumerate}[label=\roman*]
+
+\item \label{p1} \verb|probabilityOfGettingInfection| (\verb|prob|): 0.05 (starting phase); 0.02 at day 49 (adoption of non-pharmaceutical measures); 0.035 at day 149 (some relaxation in compliance); 0.02 at day 266 (again, compliance to rules);  
+
+\item \label{p2} \verb|intrinsicSusceptibility| based on \verb!intrinsicSusceptibilityFactor! set to 5 in Eq. \ref{intrinsic}
+\begin{equation}
+intrinsicSusceptibility = intrinsicSusceptibilityFactor^{groupFragility}
+\label{intrinsic}
+\end{equation}
+with $groupFragility$ exponent set to:
+
+\begin{description}
+\item [1] for extra-fragile persons,
+\item [0] for fragile persons,
+\item [-1] for regular persons,
+\item [-2] young people from 0 to 24 years old;
+\end{description}
+
+\item \label{p3} \verb|%PeopleAnyTypeNotSymptomaticLeavingHome| (\verb|%PeopleAny|)
+determines, in a probabilistic way, the number of all people going around in case of limitations/lockdown; 
+the limitation operates only if the lockdown is on (see above); in use
+at (day) 20, 90; at 28, 80; at 31, 0; at 106, 80; at 110, 95; at112, 85; at 117, 95; at 121, 90; at 259, 90; at 266, 80; at 277, 50;
+at 302, 70; at 320, 90; at 325, 50; at 329, 80; at 332, 50; at 336, 80; at 337, 50; at 339, 80; 
+
+\item \label{p4} \verb|%PeopleNotFragileNotSymptomaticLeavingHome| (\verb|%PeopleNot|)
+determines, in a probabilistic way, the number of regular people going around in case of limitations/lockdown;
+the limitation operates only if the lockdown is on (into our simulated world, from day 20); \verb|%PeopleNot| values: 
+at (day) 31, 80; at 35, 70; at 36, 65; at 38, 15; at 42, 25; at 84, 30; at 106, 0; at 302, 90; at 325, 50; at 332, 50; 
+at 337, 50; at 339, 100; at 349, 90;
+
+the parameters \ref{p3} and \ref{p4} in some phase change very frequently, reproducing into the model the uncertainty of the decisions that was happening  in the real world in the same periods; 
+
+NB, the parameters \ref{p3} and \ref{p4} produce independent effects, as in the following examples: (a) the activation of \emph{\%PeopleAny at 31, 0} and, simultaneously, of \emph{\%PeopleNot at 31, 80}, means that people had to stay home on that day, but people specifically not fragile could go out in 80\% of the cases; (b) \emph{\%PeopleAny at 339, 80} and, simultaneously, \emph{\%PeopleNot at 339, 100} means that fragile and not fragile persons cannot always go around, but only in the 80\% of the cases, instead considering uniquely non-fragile persons they are free to go out; the construction is an attempt to reproduce a fuzzy situation;
+
+in future versions of the model, we will define the quotas more straightforwardly:
+\begin{itemize}
+\item \verb|%FragilePeopleNotSymptomaticLeavingHome|;
+\item \verb|%NitFragilePeopleNotSymptomaticLeavingHome|;
+\end{itemize}
+
+\item \label{p5} \verb|%openFactoriesWhenLimitationsOn| (\verb|%Fac|) 
+determines, in a probabilistic way, what factories (small and large industries, commercial surfaces, private and government offices)
+are open when limitations are on; if the factory of a worker is open, the subject can go to work, avoiding restrictions (but uniquely in the first step of activity of each day); \verb|%Fac| 
+is in use at (day) 38, value4 0; at 49, 20; at 84, 70; at 106, 100; at 266, 90; at 277, 70; at 302, 80; at 320, 90; at 325, 30;
+at 329, 90; at 332, 30; 336, 90; at 337, 30; at 339, 100;
+
+\item \label{p6} \verb|stopFragileWorkers|  (\verb|sFW|); if set to 1, fragile workers (i.e., people fragile due to prior illnesses) can move out of their homes following the \ref{p3} and \ref{p4} parameters, but can go to work in no case; the regular case is that the workers (fragile or regular) can go to their factory (if open) also when limitations are on; in one of the experiments we used \verb|sFW| with set to 1 (on) at day 245  and to 0 (off) at day 275;
+
+alternatively, we also have the \verb|fragileWorkersAtHome| parameter; if on (set to 1) the total of the workers is unchanged, but the workers are all regular; we can activate this counterfactual operation uniquely at the beginning of the simulation;
+
+\item \label{p7} when \verb|activateSchools| (\verb|aSch|) is on (set to 1) teachers and students go to school avoiding restrictions (but uniquely in the first step of activity of each day);  \verb|\%Students| limits to its value the quota of the students moving to school; the residual part is following the lessons from home; we used \verb|aSch| at (day) 1, on; at 17, off; at 225, on; at 325, off; at 339, on; we used \verb|1%st| 
+at (day) 0, 100; at 277, 50; at 339, 50; at 350, 50 (repeated values are not relevant for the model, but for the memory of the programmer-author);
+
+\item \label{p8} \verb|radiusOfInfection| (\verb|radius|) with value 0.2; the effect of the contagion---outside enclosed spaces, or there, but for temporary presences---is possible within that distance; in the model, space is missing of a scale, but forcing the area to be in the scale of a region as Piedmont, 0.2 is equivalent to 20 meters; we have to better calibrate this measure, with movements and probabilities; this is a key step in future developments of the model.
+
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Agents' interaction}
+\label{inter}
+
+We underline that our tool is not based on microsimulation sequences, calculating contagions agent by agent, following their characteristics and ex-ante probabilities. It implements a true agent-based simulation, with the agents acting and, most of all, interacting, thus generating contagions.
+
+Each run creates a population following expected characteristics but with small random specifications to assure heterogeneity in agents. The daily choices of the agents are partially random to reproduce real-life variability.
+
+Contagions arise from agents' interactions, in four situations, as specified in Fig. \ref{outline}:
+
+\begin{enumerate}[label=\Alph*]
+
+\item - in houses (at night), hospitals, nursing homes;
+
+\item - in schools, workplaces in general, among people stable there;
+
+\item - in the same places (excluding schools) by people temporary there and in open spaces;
+
+\item - interactions mainly in open spaces.
+
+\end{enumerate}
+
+At \url{https://terna.to.it/simul/contagionSequences.pdf}, in Section ``2 The visualization of the sequences of contagions in simulated epidemics'' and in ``A Appendix: Analyzing examples of contagion sequences'' we have the visualizations of the effects of those sequences of interactions-contagions.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Model calendar}\label{calend}
+
+Day 1 is fixed at Feb \nth{4}, 2020. The calendar scan is that of the Table \ref{dates}.
+
+\begin{table}[t]
+\begin{footnotesize}
+\begin{tabular}{rr}
+\hline\noalign{\smallskip}
+ Day & Date  \\
+ \noalign{\smallskip}\svhline\noalign{\smallskip}
+ 25 & 28- 2-2020 \\
+ 50 & 24- 3-2020 \\
+ 75 & 18- 4-2020 \\
+100 & 13- 5-2020 \\
+125 &  7- 6-2020 \\
+150 &  2- 7-2020 \\
+175 & 27- 7-2020 \\
+200 & 21- 8-2020 \\
+225 & 15- 9-2020 \\
+250 & 10-10-2020 \\
+275 &  4-11-2020 \\
+300 & 29-11-2020 \\
+325 & 24-12-2020 \\
+350 & 18- 1-2021 \\
+375 & 12- 2-2021 \\
+400 &  9- 3-2021 \\
+425 &  3- 4-2021 \\
+450 & 28- 4-2021 \\
+475 & 23- 5-2021 \\
+500 & 17- 6-2021 \\
+525 & 12- 7-2021 \\
+550 &  6- 8-2021 \\
+575 & 31- 8-2021 \\
+600 & 25- 9-2021 \\
+625 & 20-10-2021 \\
+650 & 14-11-2021 \\
+675 &  9-12-2021 \\
+\hline\noalign{\smallskip}
+\end{tabular}
+\end{footnotesize}
+\caption{The days of the simulation and their position in the calendar}
+\label{dates}
+\end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The visualization of the sequences of contagions in simulated epidemics}
+\label{visualization}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Contagion sequences}
+\label{sequences}
+
+How to understand what is happening in our simulated epidemics at a micro-scale? The key idea is to analyze the sequences of contagions by representing each infecting agent as a horizontal segment with a vertical link to another agent, receiving the infection. We render it via another segment at an upper layer. With colors, line thickness, and styles, we represent multiple data. We have time on the $x$ axis and the progressive ordinal number of the infected agents in the $y$ axis.
+
+Read about the detail of visualization technique in Appendix \ref{appHowItWorks} and in the example of Section \ref{howToAnalyze}. At \url{https://github.com/terna/contagionSequence} we have the sequence analyzer. From there, you can also run the program automatically, thanks to \url{https://mybinder.org}.
+
+Looking at the different sequences, one feels as \emph{The Sorcerer's Apprentice} of the Goethe 1797 poem. How to proceed?
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{A few sequences suggesting a policy via counterfactual limitations}
+\label{seqSuggPol}
+
+We report several sequences in Appendix \ref{appContagion}, considering them mainly as examples to comment, examining the effects of nursing homes, workplaces, hospitals, homes, luckily close to never schools. Among those cases, we highlight the inspiring sequence of Section \ref{c8} topics.
+
+In Fig. \ref{fourSequences} we can look both at the places where contagions occur and at the dynamics emerging with different levels of intervention. Using the article's pdf version as a file, the reader can enlarge the four pictures (and any figure in the appendices). The reference to specific days is related to the calendar of Appendix \ref{appCalendar}. Here, in the fourth case (bottom right of Fig. \ref{fourSequences}, we introduce the stop to fragile agents of any type at Feb \nth{15}; the decision would have been plausible, considering that the situation of danger probably was known before that date. To be more realistic, the analysis that deepens that situation in Appendix \ref{app1000run} and so in Table \ref{keyResultsT} uses the day Feb \nth{20} as a turning point.
+
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.16]{withShort1.png}~~~\includegraphics[scale=0.16]{withShort1A.png} 
+%\hspace{0.2cm}
+\center
+\includegraphics[scale=0.16]{withShort1A200.png}~~~\includegraphics[scale=0.16]{withShort1B.png} \\
+\caption{(\emph{top left}) an epidemic with containment measures, showing a highly significant effect of workplaces (brown);
+ (\emph{top right}) the effects of stopping fragile workers at day 20, with a positive result, but home contagions (cyan) keep alive the pandemic, exploding again in workplaces (brown); (\emph{bottom left}) the same analyzing the first 200 infections with evidence of the event around day 110 with the new phase due to a unique asymptomatic worker, and (\emph{bottom right}) stopping fragile workers and any case of fragility at day 15, also isolating nursing homes} 
+\label{fourSequences}
+\end{figure}
+
+\begin{comment}
+withShort1.png         %using SIsaR 9.4.2 as is (basic control) with 123456_22314, file ex123456_22313.csv;
+withShort1A.png      %using SIsaR 9.4.2 as is (basic control + 20 sFW 1,i.e., stop Fragile Workers) with 123456_22314, file ex123456_22314A.csv;
+withShort1A200.png %using SIsaR 9.4.2 as is (basic control + 20 sFW 1,i.e., stop Fragile Workers) with 123456_22314, file ex123456_22314A.csv;
+withShort1B.png       %using SIsaR 9.4.2 as is (basic control + $$$) with 123456_22314, file ex123456_22314B.csv;
+\end{comment}
+
+The four pictures, related to epidemics starting precisely in the same way, represent an evolving narrative, that:
+
+\begin{enumerate}
+
+\item starts from the observation of an epidemic in which workplaces have an evident role in sustaining the spreading of the virus, despite the adoption of the non-pharmaceutical containment measures adopted locally and at the national level;
+
+\item adopts a counterfactual limitation holding back fragile workers from factories (any workplace), with some initial success, but with a \emph{bridge} to a phase 2;
+
+\item\label{micromicro} deepens the situation of the specific agent operating as a bridge, a regular (non-fragile) worker infected at work by another regular worker infected at home by a fragile agent;
+
+\item introduces a more substantial  control, anticipating at Feb \nth{15} the limitation to fragile workers and stopping the mobility of all fragile people from Feb \nth{20} with evident positive effect, having the whole epidemic very few contagions and lasting a limited number of days.
+
+\end{enumerate}
+
+In our model, the fragile workers are those 55 years old or more; in this scheme, if they cannot work remotely from home, they are supposed to obtain regular sick pay (see Sections \ref{CBanalysis} and \ref{c8} for considerations).
+
+This kind of analysis is a source of suggestions for interventions, also if we cannot validate them only with micro studies, as in bullet point \ref{micromicro} above. 
+
+Summarizing: 
+
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\item we confirm the interest of the knowledge that we can extract from contagion sequences; 
+\item we suggest, as an integrative example, the simulation of Fig. \ref{6b}  in Appendix \ref{appContagion}, showing many cases of fragile workers diffusing the infection;
+\item finally, we will use a more systematic data exploration, in Section \ref{app1000run}, as summarized in Section \ref{keyResultsS}.
+
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Simulation repetition and emerging key results}
+\label{keyResultsS}
+
+Following the trace of Fig. \ref{fourSequences}, we now explore systematically the introduction of factual, counterfactual, and prospective interventions to control the spread of the contagions. Each simulation run---whose length coincides with the disappearance of symptomatic or asymptomatic contagion cases---is a datum in a wide scenario of variability in time and effects. Consequently, we need to represent compactly the results emerging from batches of repetitions, to compare each batch's basic assumption's consequences.
+
+We adopted blocks of one thousand repetitions (or more, for other analyses not reported here). Besides summarizing the results with the usual statistical indicators, we adopted the technique of the heat-maps (see Appendix \ref{app1000run}). 
+
+In this way, we endorse the \cite{steinmann2020don} incitement.
+\begin{quote}
+We urge those attempting to model COVID-19 for decision support to acknowledge the deep uncertainties surrounding the pandemic, and to employ Decision Making under Deep Uncertainty methods such as exploratory modelling, global sensitivity analysis, and robust decision-making in their analysis to account for these uncertainties.
+\end{quote}
+
+Using the calculations of Appendix \ref{app1000run}, we build the Table \ref{keyResultsT}, starting from a zero interventions case (no controls of any type) e moving toward actions more and more specific (always non-pharmaceutical). In the table, we report four indicators: the total number of symptomatic subjects in nursing homes; the total number of symptomatic subjects; the total number of symptomatic-asymptomatic-deceased subjects; the duration of the epidemic. The scale to which refer the data is the Piedmont population, i.e., 4,350 million people. We report the mean and standard deviation of each measure in the batch of 1,000 repetitions of the simulated epidemic. In the last column, we write the section of the appendix, reporting the results of the specific batch calculation.
+
+
+\begin{table}[t]
+\center
+\footnotesize
+%\small
+\begin{tabular}{lrrrrr}
+\hline\noalign{\smallskip}
+Scenarios                       & total sym.          &  total sym.  & total sym.       & days~~~~ & Section \\
+{}                                     & in nursing         &                    & asympt.~~~   \\
+{}                                     & homes~~~~~    &                    & deceased~~  \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+1.~no control                       &       4.65~         &  851.12~     &  2253.48         &  340.10~   &  \ref{EpidemicsWithoutControlS} \\
+                                        &       (7.89)         &  (288.52)    &  (767.58)         &  (110.21) \\
+\hline\noalign{\smallskip}
+2.~basic controls, no         &        4.51~         &   158.55~    &  416.98~         &  196.97~   & \ref{EpidemicsWithAndNoSchoolS} \\
+ school in Sep 2020       &       (7.39)         &   (174.10)     &  (462.94)        &  (131.18) \\
+\hline\noalign{\smallskip}
+3.~basic controls, schools   &       4.24~        &  153.71~    &      409.73~       &  199.35~   & \ref{EpidemicsWithAndSchoolS} \\
+ open in Sep 2020           &       (7.29)        &  (168.55)   &     (454.12)        &  (129.00) \\
+\hline\noalign{\smallskip}
+4.~basic controls, stop        &      4.32~         &  120.17~   &      334.68~         &  181.10~     & \ref{EpidemicsFWsS} \\
+ fragile workers, no          &      (7.48)         &   (149.10)  &     (413.90)         &   (125.46) \\
+ schools in Sep 2020   \\
+\hline\noalign{\smallskip}
+5.~basic controls, nur-          &       3.41~      &  150.53~     &     408.08~         &  201.76~     & \ref{EpidemicsNHsS} \\
+ sing homes isol., no         &       (6.88)     &   (172.48)    &     (467.54)         &  (138.15) \\
+ schools in Sep 2020   \\
+\hline\noalign{\smallskip}
+6.~basic controls, stop          &       4.38~      &   154.15~    &     408.50~         &  195.81~     & \ref{EpidemicsFragileS} \\
+ fragile people, no            &       (7.52)      &   (170.22)    &      (456.08)        &  (129.52) \\
+ schools in Sep 2020   \\
+\hline\noalign{\smallskip}
+7.~basic controls, stop f.       &       3.25~      &   105.63~    &     302.62~          &  174.39~     & \ref{EpidemicsNoAllFragileS} \\
+ workers \&  f. people \&   &       (6.60)      &   (134.80)   &     (382.14)          &  (121.82) \\
+ n. h. isol., no sch, Sep.        \\
+ \hline\noalign{\smallskip}
+8.~b. controls, stop f. workers  &     3.46~     &  124.10~    &    397.05~           &  200.31~     & \ref{EpidemicsNoAllFragileFacsOnS} \\
+ \&  f. people \& nur. h. isol.,  &  (6.65)       &  (132.42)   &    (399.64)           &  (121.46) \\
+ \& factories op., no sch. Sep. \\
+\hline\noalign{\smallskip}
+9.~b. controls, stop f. workers  &     3.63~     &  116.55~   &    374.68~           &  195.28~     & \ref{EpidemicsNoAllFragileFacsOnSchOnS} \\
+ \&  f. people \& nur. h. isol.,  &   (6.96)      &  (130.91) &     (394.66)           &  (119.33) \\
+ \& factories op., sch. open Sep. \\
+\hline\noalign{\smallskip}
+\end{tabular}
+
+\caption{Report of the key results, with mean and (std)}
+\label{keyResultsT}
+\end{table}
+
+
+The values of the standard deviations are impressive, as a signal of the difficulties in forecasting an epidemic. Those estimates are primarily due to very different durations of the virus diffusion, being this occurrence also linked to thin events like that in bullet point \ref{micromicro} in Section  \ref{seqSuggPol}. That event is not on scale to the population size (1:1000), but it is a single agent acting, as observed in reality, in many situations.
+
+General notes: data refer to a population of 4,350 subjects (1:1,000 of Piedmont people). We over-represent nursing homes to have visibility of the phenomenon, both as the spatial distribution of these institutions and each unit dimension. As we clarify in the supporting information (see note \ref{modOnLine}), in scale, we would have less than one nursing home, with 30 hosts; we created five with a total value of around 60 hosts.
+
+A comment to Table \ref{keyResultsT}, following the different blocks, row by row:
+
+\begin{enumerate}
+\setlength{\itemsep}{0pt}
+
+\item\label{cf1} we start with a counterfactual analysis with 1,000 runs of the epidemic model without any non-pharmaceutical containment measures; The results are extraordinary heavy, both as symptomatic persons (19.6\% of the population) and total infected  people (51.8\%); the mean duration of the epidemics is close to one year;
+
+\item\label{f1}  the second step, factual, is that of introducing the sequence of non-pharmaceutical containment measures of Appendix \ref{appCalendar}, again in a batch of 1,000 runs; we have now 3,6\% and 9,6\% rates, with a diminution highly relevant, and a mean duration half of the preceding one; if you look at the heat-maps in Sections \ref{EpidemicsWithoutControlS} and \ref{EpidemicsWithAndNoSchoolS}, where we classify the results in terms of durations and infections of each epidemic in the double histograms, you can see that the difference is astonishing; a note: the actual Piedmont, where the curve of the symptomatic cases flattened with the end of May, with around 30 thousand subjects, is included in the cell in the first row, immediately to the right of the mode in Fig. \ref{EpidemicsWithAndNoSchoolHM}, considering that here we have to triplicate the number symptomatic subject to have the total measure of infected agents;
+
+\item\label{f2} in this prospective analysis, we have the same sequence of containment measures of the previous case, with the difference that from September \nth{14} (2020) schools are open; the rates on infection are a bit lower than those of case 2, the duration is very close; certainly standard deviation signal a relevant variability, but similar to the previous one; the rates of infection decrease, here and also in the similar step from case 8 to 9, with a possible interpretation: keeping in school the students for a part of the day decreases contagions in other regularly frequented spaces, where they could find more contagious people;
+
+\item\label{cf2} the fourth case is again a counterfactual one, always with the regular containment measures (and schools closed in September), but supposing that we had followed the strategy of Section \ref{seqSuggPol}, not admitting the fragile employees in the workplaces, from February \nth{20}; the positive effect is evident, with the infection rates now at 2.8\% and 7.7\%;
+
+\item\label{cf3} we decided to investigate separately two other counterfactual possibilities, always with the regular containment measures (and schools closed in September), starting with the isolation of the nursing homes, forbidding visits, separating the operators, and creating a buffer zone prohibiting to everyone to get close to nursing homes, again from February \nth{20}; we have some positive effect, but limited; sure, a bit more relevant for the nursing homes, where the residual infections are coming from contagions occurred before the blocking decision;
+
+
+\item\label{cf4} the second separate counterfactual verification, in the same conditions of the previous trial, is that of keeping all fragile people in isolation at home but, as in reality occurred, the workers can continue to move to go to their workplaces; the benefits are again quite limited;
+
+\item\label{cf5} with the \nth{7} batch of simulated epidemics, we put in action all the measures of the counterfactual experiments number \ref{cf2}, \ref{cf3}, and \ref{cf4}; the results, in this case, are highly positive with the infection rates about symptomatic people and total ones reduced to 2.4\% and 7.0\%, with the minimal mean duration in the table; as a synthesis, we are preserving all fragile people;
+
+\item\label{cf6} continuing in the counterfactual perspective, we verify the consequence of not closing factories and workplaces of any kind; we measure some worsening if we compare these rates with the previous ones, but they are always a lot better than those of the factual case \ref{f1};
+
+\item\label{cf7} finally, as the last step, we add the decision of opening the schools in September, again---as for case \ref{f2}---with some improvement if compared with the same situation with the schools closed.
+
+\end{enumerate}
+
+To summarize, the actions carried out were of extraordinary effect and usefulness. Still, it would have been possible to add other forms of action that could have had lower overall costs. Therefore, measures to preserve the situation at risk for all fragile people and at the same time to not stop the economy and society indiscriminately.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Genetic Algorithms: the tools and the goal}
+\label{tools}
+
+The tools in use are \href{https://ccl.northwestern.edu/netlogo/}{NetLogo}, to build the model, and  \href{https://www.behaviorsearch.org}{BehaviorSearch}, to run Genetic Algorithms. 
+
+Model information is online at \url{https://terna.to.it/simul/SIsaR.html} and in a short paper \cite{pescarmonacan}.
+
+We are considering epidemic trends in an area with the Piedmont region's characteristics; the calendar of the non-pharmaceutical measures of containment is updated until day 350, Jan. \nth{18}, 2021. {\color{red}TO BE UPDATED}.
+
+The goal of the simulation of the vaccination campaigns is to find vaccination sequences by people groups to reduce the number of symptomatic infected people. Deceased persons come from that condition.
+
+Click hereafter for an introduction both to \href{https://en.wikipedia.org/wiki/Genetic_algorithm}{Genetic Algorithms} and the related  \href{https://en.wikipedia.org/wiki/Holland%27s_schema_theorem}{Holland's schema theorem}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The sequence of the contagions in a simulated epidemic}\label{sequence}
+
+The critical point that makes helpful the production of an agent-based model of the SARS-CoV-2 epidemic is the possibility of creating a tool that allows analyzing the contagions' sequences in the simulated epidemics and identifying the places where they occur. 
+
+
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.3]{startingCase.png}
+
+\caption{The initial contagion events in a simulation} 
+\label{startingCase}
+\end{figure}
+
+
+
+We represent each infecting agent as a horizontal segment with a vertical connection to another agent receiving the infection. We represent the second agent via a further segment at an upper level. With colors, line thickness, and styles, we display multiple data. 
+
+As an example, look at Fig.\ref{startingCase}: we start with two agents coming from the outside, with black color code (external place); the first one is regular, as reported by the thickness of the segment, starting at day 0 and finishing at day 22; it is asymptomatic (dashed line) and infects five agents; the second one, robust, as reported by the thickness of the segment, starting at day 0 and finishing at day 15, is asymptomatic (dashed line) and infects no one; the first of the five infected agents received the infection at home (cyan color) and turns to be asymptomatic after a few days of incubation (dotted line), and so on. 
+
+Solid lines identify symptomatic infected agents; dashed lines refer to asymptomatic infected agents. Colors: brown relates to workplaces, orange to nursing homes, yellow to schools; pink to hospitals; cyan to houses, gray to open spaces. Thick or extra-thick lines refer to fragile or extra-fragile agents, respectively. Lines with regular thickness identify regular people and thin ones identify robust (young) persons.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Applying Genetic Algorithms (GA)}
+\label{GA}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Population groups}
+\label{groups}
+
+We take into consideration seven groups in order of decreasing fragility if we also take into account the exposure to contagion:
+
+\begin{enumerate}[itemsep=-2pt]
+\item [\emph{g1}]
+	extra fragile people with three components;
+	\begin{enumerate}[itemsep=-2pt]
+		\item due to intrinsic characteristics: people in nursing homes;
+		\item due to risk exposure:
+		\begin{enumerate}[itemsep=-2pt]
+			\item nursing homes operators;
+			\item healthcare operators;
+ 		\end{enumerate} 
+ 	\end{enumerate}  
+\item [\emph{g2}]
+	teachers;
+\item [\emph{g3}]
+	workers with medical fragility;
+\item [\emph{g4}]
+	regular workers;
+\item [\emph{g5}]
+	fragile people without special characteristics;
+\item [\emph{g6}]
+	regular people, not young, not worker, and not teacher;
+\item [\emph{g7}]
+	young people excluding special activity cases (a limited number in \emph{g1}).
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Vaccination quantities}\label{quantities}
+
+For each group, we have to fix five daily vaccination quotas over different periods. We have two base proposals: (a) the ``plain'' one is in Table \ref{plainQuotasTable} and the ``wise'' one in Table \ref{wiseQuotasTable} . 
+
+The quotas apply to each group's number of components to determine the number of vaccination for that group on that day. \textbf{We start from the first group, which absorbs its quantity; if in that day there are residual vaccine doses, we move to the second group and so on. A wholly vaccinated group is no more considered}.
+
+The numbers of people in each group are those of the model at \url{https://terna.to.it/simul/SIsaR.html}  and are related to Piedmont. The daily vaccinations quantities are similar to those of Piedmont, reduced by 50\% to take into account the second dose.
+ 
+How we reason?
+
+\begin{itemize}
+
+\item
+Considering the \emph{plain} option adopted in Table \ref{quotaTable1} and remembering that the time-sequence in daily actions is the winner, we will primarily vaccinate the left column groups to move gradually to other columns: (\emph{g1}) extra fragile people, (\emph{g2}) teachers, (\emph{g3}) fragile workers, (\emph{g4}) regular workers, (\emph{g5}) fragile people, (\emph{g6}) regular people, (\emph{g7}) young people.
+
+
+ 
+% table prepared using https://www.tablesgenerator.com
+
+% files vaccinations1_05.csv vaccinations1_0.csv vaccinations1_05.csv in /Users/pt/Desktop/SIsaR/0.9.6/
+\begin{table}[t]
+\centering
+\begin{tabular}{ccccccccc}
+\hline\noalign{\smallskip}
+From day & \begin{tabular}[c]{@{}c@{}}Q. of \\ vaccines \\ (000)\end{tabular} & \emph{g1} & \emph{g2} & \emph{g3} & \emph{g4} & \emph{g5} & \emph{g6} & \emph{g7} \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+373      & 5           & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        \\
+433      & 10         & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        \\
+493      & 10         & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        \\
+553      & 10         & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        \\
+613      & 20         & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        \\
+738      & end     \\ 
+\hline\noalign{\smallskip}
+\end{tabular}
+\caption{From the day of the first column, considering the quantity of the second column (000), the vaccination of each group follows the quota of the related columns}
+\label{plainQuotasTable}
+\end{table}
+
+\item
+Considering the \emph{wise} option adopted in Table \ref{quotaTable2} and remembering that the time-sequence in daily actions is the winner, we will primarily vaccinate the left column groups to move gradually to other columns, but postponing group \emph{g4} (regular workers), \emph{g6} (regular people), and \emph{g7} (young people).
+
+
+% files vaccinations2_05.csv vaccinations2_0.csv vaccinations2_05.csv in /Users/pt/Desktop/SIsaR/0.9.6/
+\begin{table}[t]
+\centering
+\begin{tabular}{ccccccccc}
+\hline\noalign{\smallskip}
+From day & \begin{tabular}[c]{@{}c@{}}Q. of \\ vaccines \\ (000)\end{tabular} & \emph{g1} & \emph{g2} & \emph{g3} & \emph{g4} & \emph{g5} & \emph{g6} & \emph{g7} \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+373      & 5           & 0.1        & 0.1        & 0.1        & 0.0        & 0.1        & 0.0        & 0.0        \\
+433      & 10         & 0.1        & 0.1        & 0.1        & 0.0        & 0.1        & 0.0        & 0.0        \\
+493      & 10         & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        \\
+553      & 10         & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        \\
+613      & 20         & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        & 0.1        \\
+738      & end     \\ 
+\hline\noalign{\smallskip}
+\end{tabular}
+\caption{From the day of the first column, considering the quantity of the second column (1000), the vaccination of each group follows the quota of the related columns}
+\label{wiseQuotasTable}
+\end{table}
+
+\end{itemize}
+
+In the internal calendar of the model, day 373 is Feb. \nth{12}, 2021, which is effectively the starting point of the vaccinations in the region; the endpoint, day 738, is Feb. \nth{10}, 2022, two years after the conventional starting point of the epidemic in this model.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Vaccination experiments}
+\label{experiments}
+
+
+
+We run the simulations of the epidemic in Piedmont in batches of ten thousand executions. The batches are different as initial hypotheses.\footnote{At \url{https://terna.to.it/simul/TernaCCA20210329.pdf} some examples.} Considering the adoption of the government non-pharmaceutical measures, we search in those batches for realizations of sequences similar to the actual events occurred in Piedmont.
+
+In Fig. \ref{piedIni}, we have the time series of the first part of Piedmont's actual epidemic, with some crucial points. The blue line represents the cumulative number of infected persons. Initially, only symptomatic cases were accounted, but after the 2020 Summer, with the adoption of more generalized tests, also asymptomatic patients are included. The model instead has two categories of positive agents. (In Fig. \ref{piedNow} the time series cover whole the period.)
+
+Following the dynamic of the data in Fig. \ref{piedIni}, we search within the simulation batch for  cases with both:
+\begin{itemize}
+\item [(i)] numbers of infected persons quite similar at\footnote{With \emph{cp}, we indicate the internal check points of the simulation program. In Fig. \ref{piedIni} we also report the number of days from the beginning of the epidemic for each check point.}  \verb|cp2| and at \verb|cp3|; besides, numbers not too different from those of the figure;
+
+\item [(ii)] the number of infected persons at \verb|cp4| has to be significantly greater than those at the previous check point.
+
+\end{itemize}
+
+In a lot of cases, epidemics satisfying condition (i) fail to match condition (ii); both the situations happen only in less than the 1.5\% of the instances in the batch of ten thousand epidemic.\footnote{Again, see  \url{https://terna.to.it/simul/TernaCCA20210329.pdf}.} We can conclude that the second wave registered in Piedmont after the Summer stability is due to new infected agents coming from outside and restarting the contagion process, as in the batch represented in the slides at the given address.
+
+
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.3]{andamento900annotato.jpg}
+
+\caption{Time series of the actual epidemic in Piedmont with some crucial points} 
+\label{piedIni}
+\end{figure}
+
+
+Other critical points in our analysis are the day on which the vaccination campaign starts, 373 of the simulation (Feb. \nth{12}, 2021), and the day of the effectiveness of the initial vaccinations, 40 days later, day 413 (Mar. \nth{22}, 2021). At those dates, within the simulations, we can find either the presence of many infected agents or of few ones, as effectively was the situation in Piedmont.\footnote{We simulate the vaccination campaigns with the GAs BehaviorSearch program, with a maximum step number of 865, related to the actual duration of case I. In the case of "y" use, the simulation never ends; when applying the GAs quotas ex-post, the simulation stops when no more infected people exist. In any case, if necessary, we have a hard finish button.}
+
+
+
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.3]{andamento900.jpg}
+
+\caption{Time series of the actual epidemic updated to the beginning of May} 
+\label{piedNow}
+\end{figure}
+
+
+
+%1%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Experiment I, with few infected agents at the vaccination starting point}
+\label{I}
+% calculation made using SIsaR_0.9.6.nlogo with 66507108 94261776 44424105
+
+
+This experiment's main plot is in Fig. \ref{ExperimentForGA_I_base}, where we read on $x$ axis the time and on the  the $y$ axis the number of infected people of any kind. Considering the thickness of the snake (or tape) developing in the figure, we also read the number of agents infected at a given date, with the thickness determining the slope of the cumulative dynamic of infected persons.
+
+The hole in the series identifies the period in which the epidemic was extinct, to restart with the arrival of infected persons from outside.
+
+
+% /Users/pt/GitHub/contagionSequence/sequentialRecords.ipynb on Experiment_I_base.csv
+\begin{figure}[t]
+\center 
+\includegraphics[scale=0.3]{ExperimentForGA_I_base.png}  
+\caption{The sequence of contagions in Experiment I, without vaccinations; crucial dates: blue line for the starting point of the vaccination campaign and red line for the start of the effectiveness of the initial vaccinations} 
+\label{ExperimentForGA_I_base}
+\end{figure}
+
+The following sequences start from day 413, Mar. \nth{22}, when the effectiveness of the initial vaccinations---if any---begins, after 40 days from initial vaccinations.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Planned vaccination campaigns in Experiment I}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Vaccinated persons by group using ``plain'' or ``wise'' quotas}
+
+Applying the ``plain'' quotas of Table \ref{plainQuotasTable} to the group composition of Experiment I, as in Table \ref{susceptibleExperimentForGA_I}, the effects on the numbers of vaccinated people in each group are in Fig. \ref{Experiment_I_plainVaccinationSequence}.
+
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.45]{Experiment_I_plainVaccinationSequence.png} % experiment_I_vaccination_plots.ipynb
+
+\caption{Experiment I, ``plain'' vaccination sequence; on the $y$ axis the number of vaccinated subjects of each group (if vaccination is complete, the line is horizontal)} 
+\label{Experiment_I_plainVaccinationSequence}
+\end{figure}
+
+
+Applying the ``wise'' quotas of Table \ref{wiseQuotasTable} to the group composition of Experiment I, as in Table \ref{susceptibleExperimentForGA_I}, the effects on the numbers of vaccinated people in each group are in Fig. \ref{Experiment_I_wiseVaccinationSequence}.
+
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.45]{Experiment_I_wiseVaccinationSequence.png} % experiment_I_vaccination_plots.ipynb
+
+\caption{Experiment I, ``wise'' vaccination sequence; on the $y$ axis the number of vaccinated subjects of each group (if vaccination is complete, the line is horizontal)} 
+\label{Experiment_I_wiseVaccinationSequence}
+\end{figure}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{No vaccination}
+
+
+% /Users/pt/GitHub/contagionSequence/sequentialRecords.ipynb on Experiment_I_base.csv
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.3]{ExperimentForGA_I_base>413.png}
+
+\caption{The sequence of contagions in Experiment I, after day 413: no vaccination campaign} 
+\label{ExperimentForGA_I_base>413}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Vaccinated people still spreading the infection}
+
+% /Users/pt/GitHub/contagionSequence/sequentialRecords.ipynb on Experiment_I_plain_1.csv
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.3]{ExperimentForGA_I_1>413.png}
+
+\caption{The sequence of contagions in Experiment I, after day 413: ``plain'' vaccination campaign, with \emph{vaccinated people still spreading the infection}} 
+\label{ExperimentForGA_I_1>413}
+\end{figure}
+
+
+% /Users/pt/GitHub/contagionSequence/sequentialRecords.ipynb on Experiment_I_wise_1.csv
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.3]{ExperimentForGA_I_2_1>413.png}
+
+\caption{The sequence of contagions in Experiment I, after day 413: ``wise'' vaccination campaign, with \emph{vaccinated people still spreading the infection}} 
+\label{ExperimentForGA_I_2_1>413}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Vaccinated people not spreading the infection}
+
+% /Users/pt/GitHub/contagionSequence/sequentialRecords.ipynb on Experiment_I_plain_0.csv
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.3]{ExperimentForGA_I_0>413.png}
+
+\caption{The sequence of contagions in Experiment I, after day 413: ``plain'' vaccination campaign, with \emph{vaccinated people not spreading the infection}} 
+\label{ExperimentForGA_I_0>413}
+\end{figure}
+
+% /Users/pt/GitHub/contagionSequence/sequentialRecords.ipynb on Experiment_I_wise_0.csv
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.3]{ExperimentForGA_I_2_0>413.png}
+
+\caption{The sequence of contagions in Experiment I, after day 413: ``wise'' vaccination campaign, with \emph{vaccinated people not spreading the infection}} 
+\label{ExperimentForGA_I_2_0>413}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Vaccinated people 50\% spreading the infection}
+
+% /Users/pt/GitHub/contagionSequence/sequentialRecords.ipynb on Experiment_I_plain_.csv
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.3]{ExperimentForGA_I_05>413.png}
+
+\caption{The sequence of contagions in Experiment I, after day 413: ``plain'' vaccination campaign, with \emph{vaccinated people spreading the infection in the 50\% of cases}} 
+\label{ExperimentForGA_I_05>413}
+\end{figure}
+
+% /Users/pt/GitHub/contagionSequence/sequentialRecords.ipynb on Experiment_I_wise_05.csv
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.3]{ExperimentForGA_I_2_05>413.png}
+
+\caption{The sequence of contagions in Experiment I, after day 413: ``wise'' vaccination campaign, with \emph{vaccinated people spreading the infection in the 50\% of cases}} 
+\label{ExperimentForGA_I_2_05>413}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Experiment I, following GAs suggestions}\label{GA_I}
+
+% calculation made using SIsaR_0.9.6.nlogo with 66507108 94261776 44424105 
+% at t = 0 and t=373 (Feb. \nth{12}, 2021) 
+% with a specific button generating LaTeX output
+\begin{table}[t]
+\centering
+\begin{tabular}{lccccccc}
+\hline\noalign{\smallskip}
+& \emph{g1} & \emph{g2} & \emph{g3} & \emph{g4} & \emph{g5} & \emph{g6} & \emph{g7} \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+Susc. at t = 0                   & 133 & 84 & 240 & 1560 & 1179 & 254 & 900 \\
+Susc. when\\vacc. starts & 124 & 81 & 162 & 1234 & 1032 & 245 & 891 \\
+\hline\noalign{\smallskip} 
+\end{tabular}
+\caption{Experiment I: susceptible persons at the beginning of the simulation and when the vaccination campaign starts,  day 373, Feb. \nth{12}, 2021}
+\label{susceptibleExperimentForGA_I}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Vaccinated people still spreading the infection}
+
+% /Users/pt/GitHub/contagionSequence/sequentialRecords.ipynb on Experiment_I_1bestGA.csv
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.3]{ExperimentForGA_I_1>413bestGA.png} 
+
+\caption{The sequence of contagions in Experiment I, after day 413: GAs vaccination campaign, with \emph{vaccinated people still spreading the infection: best GAs strategy}}
+\label{ExperimentForGA_I_1>413bestGA}
+\end{figure}
+
+% vaccinationsGA_I_1.csv or vaccinationsGA_I_0.csv or vaccinationsGA_I_05.csv (see above at $$$)
+\begin{table}[t]
+\centering
+\begin{tabular}{cclllllll}
+\hline\noalign{\smallskip}
+From day & \begin{tabular}[c]{@{}c@{}}Q. of \\ vaccines \\ (000)\end{tabular} & \emph{g1} & \emph{g2} & \emph{g3} & \emph{g4} & \emph{g5} & \emph{g6} & \emph{g7} \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+373 & 5 & 0.01 & 0 & 0 & 0.79 & 0.18 & 0.38 & 0.19 \\
+433 & 10 & 0.94 & 0.06 & 0.32 & 0.54 & 0.19 & 0.83 & 0.5 \\
+493 & 10 & 0.97 & 0.97 & 0.74 & 0.79 & 0.2 & 0.14 & 0.52 \\
+553 & 10 & 0.98 & 0.83 & 0.02 & 0.39 & 0.99 & 0.04 & 0.48 \\
+613 & 20 & 0.52 & 0.01 & 0.83 & 0.6 & 1 & 0.27 & 0.9 \\
+738      & end   \\ 
+\hline\noalign{\smallskip}
+\end{tabular}
+\caption{GAs best strategy in experiment I, with \emph{vaccinated people still spreading the infection}: from the day of the first column, considering the quantity of the second column, the vaccination of each group follows the quota of the related columns}
+\label{quotaTableExperimentForGA_I_1>413bestGA}
+\end{table}
+
+Applying the quotas of Table \ref{quotaTableExperimentForGA_I_1>413bestGA} to the group composition of Experiment I, as in Table \ref{susceptibleExperimentForGA_I}, the effects on the numbers of vaccinated people in each group are in Fig. \ref{Experiment_I_GA1VaccinationSequence}.
+
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.45]{Experiment_I_GA_1_VaccinationSequence.png} % experiment_I_vaccination_plots.ipynb
+
+\caption{Experiment I, GA 1 vaccination sequence; on the $y$ axis the number of vaccinated subjects of each group (if vaccination is complete, the line is horizontal)} 
+\label{Experiment_I_GA1VaccinationSequence}
+\end{figure}
+
+Some of the coefficients in Table \ref{quotaTableExperimentForGA_I_1>413bestGA} are not used, e.g., if the daily quantity of doses is finished before considering a specific group or if the whole group has already received the vaccine. The GAs procedure does not optimize those coefficients.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Vaccinated people not spreading the infection}
+
+
+% /Users/pt/GitHub/contagionSequence/sequentialRecords.ipynb on Experiment_I_0bestGA.csv
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.3]{ExperimentForGA_I_0>413bestGA.png}
+
+\caption{The sequence of contagions in Experiment I, after day 413: GAs vaccination campaign, with \emph{vaccinated people not spreading the infection: best GAs strategy}}
+\label{ExperimentForGA_I_0>413bestGA}
+\end{figure}
+
+
+% vaccinationsGA_I_1.csv or vaccinationsGA_I_0.csv or vaccinationsGA_I_05.csv (see above at $$$)
+\begin{table}[t]
+\centering
+\begin{tabular}{cclllllll}
+\hline\noalign{\smallskip}
+From day & \begin{tabular}[c]{@{}c@{}}Q. of \\ vaccines \\ (000)\end{tabular} & \emph{g1} & \emph{g2} & \emph{g3} & \emph{g4} & \emph{g5} & \emph{g6} & \emph{g7} \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+373 & 5 & 0.01 & 0 & 0 & 0.89 & 0.31 & 0.98 & 0.25 \\
+433 & 10 & 0.17 & 0.64 & 0.08 & 0.14 & 0.22 & 0.79 & 0.48 \\
+493 & 10 & 0.11 & 0.87 & 0.4 & 0.46 & 0.45 & 0.34 & 0.14 \\
+553 & 10 & 0.23 & 0.82 & 0.14 & 0.16 & 0.35 & 0.59 & 0.45 \\
+613 & 20 & 0.35 & 0.43 & 0.65 & 0.54 & 0.79 & 0.66 & 0.59 \\
+738      & end   \\ 
+\hline\noalign{\smallskip}
+\end{tabular}
+\caption{GAs best strategy in experiment I, with \emph{vaccinated people not spreading the infection}: from the day of the first column, considering the quantity of the second column, the vaccination of each group follows the quota of the related columns}
+\label{quotaTableExperimentForGA_I_0>413bestGA}
+\end{table}
+
+Applying the quotas of Table \ref{quotaTableExperimentForGA_I_0>413bestGA} to the group composition of Experiment I, as in Table \ref{susceptibleExperimentForGA_I}, the effects on the numbers of vaccinated people in each group are in Fig. \ref{Experiment_I_GA0VaccinationSequence}.
+
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.45]{Experiment_I_GA_0_VaccinationSequence.png} % experiment_I_vaccination_plots.ipynb
+
+\caption{Experiment I, GA 0 vaccination sequence; on the $y$ axis the number of vaccinated subjects of each group (if vaccination is complete, the line is horizontal)} 
+\label{Experiment_I_GA0VaccinationSequence}
+\end{figure}
+
+Some of the coefficients in Table \ref{quotaTableExperimentForGA_I_0>413bestGA} are not used, e.g., if the daily quantity of doses is finished before considering a specific group or if the whole group has already received the vaccine. The GAs procedure does not optimize those coefficients.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Vaccinated people 50\% spreading the infection}
+
+% /Users/pt/GitHub/contagionSequence/sequentialRecords.ipynb on Experiment_I_05bestGA.csv
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.3]{ExperimentForGA_I_05>413bestGA.png}
+
+\caption{The sequence of contagions in Experiment I, after day 413: GAs vaccination campaign, with \emph{vaccinated people 50\% spreading the infection: best GAs strategy}}
+\label{ExperimentForGA_I_05>413bestGA}
+\end{figure}
+
+
+% vaccinationsGA_I_1.csv or vaccinationsGA_I_0.csv or vaccinationsGA_I_05.csv (see above at $$$)
+\begin{table}[t]
+\centering
+\begin{tabular}{cclllllll}
+\hline\noalign{\smallskip}
+From day & \begin{tabular}[c]{@{}c@{}}Q. of \\ vaccines \\ (000)\end{tabular} & \emph{g1} & \emph{g2} & \emph{g3} & \emph{g4} & \emph{g5} & \emph{g6} & \emph{g7} \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+373 & 5 & 0.11 & 0.79 & 0.54 & 0.63 & 0.33 & 0.62 & 0.85 \\
+433 & 10 & 0.16 & 0.25 & 0.22 & 0.28 & 0.21 & 0.85 & 0.04 \\
+493 & 10 & 0.65 & 0.67 & 0.48 & 0.64 & 0.75 & 0.14 & 0.97 \\
+553 & 10 & 0.36 & 0.45 & 0.59 & 0 & 0.44 & 0.74 & 0.6 \\
+613 & 20 & 0.22 & 0.41 & 0.63 & 0 & 0.41 & 0.44 & 0.48 \\
+738      & end   \\ 
+\hline\noalign{\smallskip} 
+\end{tabular}
+\caption{GAs best strategy in experiment I, with \emph{vaccinated people 50\% spreading the infection}: from the day of the first column, considering the quantity of the second column, the vaccination of each group follows the quota of the related columns}
+\label{quotaTableExperimentForGA_I_05>413bestGA}
+\end{table}
+
+Applying the quotas of Table \ref{quotaTableExperimentForGA_I_05>413bestGA} to the group composition of Experiment II, as in Table \ref{susceptibleExperimentForGA_I}, the effects on the numbers of vaccinated people in each group are in Fig. \ref{Experiment_I_GA05VaccinationSequence}.
+
+\begin{figure}[t]
+\center
+\includegraphics[scale=0.45]{Experiment_I_GA_05_VaccinationSequence.png} % experiment_I_vaccination_plots.ipynb
+
+\caption{Experiment I, GA 0,5 vaccination sequence; on the $y$ axis the number of vaccinated subjects of each group (if vaccination is complete, the line is horizontal)} 
+\label{Experiment_I_GA05VaccinationSequence}
+\end{figure}
+
+Some of the coefficients in Table \ref{quotaTableExperimentForGA_I_05>413bestGA} are not used, e.g., if the daily quantity of doses is finished before considering a specific group or if the whole group has already received the vaccine. The GAs procedure does not optimize those coefficients.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{A very short comment on Experiment I}
+
+The advantage of the GAs strategy is relevant in the case of the vaccinated people still spreading the infection, comparing both with ``plain'' or ``wise'' strategies. Note: we have, in this case, a pretty limited number of infected people at the date of both the initial vaccination and the validity of the initial vaccinations. The limited number of agents at the vaccination starting point can explain the presence of worse results in ``wise'' strategy adoption, due to the prevalence of particular sequences.
+
+The main attention of the GAs is initially is related to \emph{g4}, and \emph{g6} groups (regular workers and regular persons). Maybe, they are composed of highly circulating persons. In the third sub-case (Table \ref{quotaTableExperimentForGA_I_05>413bestGA}), also \emph{g2} (teachers) and \emph{g7} (young persons, but as residual intervention and discontinuously) groups are relevant.
+
+
+EXPERIMENTS II - IV NOT REPORTED HERE, SEE \href{https://terna.to.it/simul/GAresultPresentation.pdf}{https://terna.to.it/simul/GAresultPresentation.pdf}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Experiment synopsis}
+
+
+% synopsys
+\begin{table}[t]
+\centering
+\begin{scriptsize} % or footnotesize, scriptsize, tiny, etc.
+\begin{tabular}{llllllllllll}
+\hline\noalign{\smallskip}
+Exper.    & At   & Final      & Final        & Final       & Final      & Final       & Final    & Final        & Final    & Final        & Final     \\
+             & day & no         & ``plain''       & ``wise''        & GAs         & ``plain''       & ``wise''        & GAs         & ``plain''       & ``wise''        & GAs    \\
+             & 413 & vaccin. & vaccin.    & vaccin.  & vaccin.  & vaccin.  & vaccin.  & vaccin.  & vaccin.  & vaccin.  & vaccin.  \\
+ (1000) &        &              &  infect.  &  infect. &  infect. &  infect. &  infect. &  infect. &  infect. &  infect. &  infect.\\
+             &       &              &  100\%   &  100\% &  100\% &  0\% &  0\% &  0\% & 50\% &  50\% &  50\% \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+I            & 197 & 325 & 236 & 263 & \textbf{200} & 203 & 211   & 199 & 204 & 229 & 203 \\
+             & -      & 128 & 39    & 66  & \textbf{3}    &  6     & 14  & 2     & 7     & 32 & 6 \\
+\\
+II           & 233 & 375 & 355 &  344 & \textbf{305}  & 340 & 334 & \textbf{297}  & 356 & 344 &  \textbf{288} \\
+             & -      &  142 & 122 & 111 & \textbf{72}    & 107 & 101 & \textbf{64}   & 123   & 111 &  \textbf{55} \\
+\\
+III           & 201 & 468 & 291 &  216 & 215  & 211 & 214 & 207  & 216 & 209 &  208 \\
+             & -      &  267 & 90  & 15    & 14    & 10  & 13   &  6     & 15    & 8      &  7 \\
+\\
+IV           & 300 & 464 & 418 &  404 & 395  & 408 & 405 & \textbf{377}  & 410 & 406 &  395 \\
+             & -      &  164 & 118  & 104    & 95  & 108 & 105 &  \textbf{77}  & 110    & 107  &  95 \\
+\\
+\hline\noalign{\smallskip}
+\end{tabular}
+\end{scriptsize}
+\caption{Results of the vaccination campaigns in the four experiments, considering symptomatic people (the second row in each experiment report the results minus the number of symptomatic people at day 413)}
+\label{caseSynopsys}
+\end{table}
+
+We will add other experiments.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{To do}
+
+Using GAs, add the capability to replicate a specific search with the same parameters, but changing the vaccinated people randomly (so-called \emph{best-checking replicates}). 
+
+We can do that using \verb|newSeed| before the vaccination action. How to save, and where, that value, to exactly replicate the calculations? In a file?
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Cost-benefit analysis of the of interventions}
+\label{CBanalysis}
+
+Considering  the different interventions of Table \ref{keyResultsT} we can evaluate \ldots
+
+First of all, the costs for the attribution of sick pay to workers who are compulsorily absent from work, if they are not able to carry out telework activities and the benefits of continuing economic activities \ldots
+
+Internal contents in Sections \ref{seqSuggPol}. 
+\ref{keyResultsS} with Table \ref{keyResultsT}, \ref{c7}, 
+\ref{EpidemicsFWsS}, 
+\ref{EpidemicsNoAllFragileS}.
+
+An interesting reference is \cite{doi:10.1111/ijcp.13674}, where \ldots WORKS IN PROGRESS.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Summarizing}
+
+WORKS IN PROGRESS.
+
+For future works:
+\begin{itemize}
+
+\item add: transportation; discotheques; movement regulation by hours; \ldots;
+
+\item use \url{https://terna.github.io/SLAPP/};
+
+\item refer to \url{https://www.quantamagazine.org/how-to-assess-risks-during-the-coronavirus-pandemic-20200925/?utm_source=phplist1469&utm_medium} as a source of the parameters and to \url{https://www.gleamproject.org} for data and analysis.
+
+\end{itemize}
+
+\section*{Acknowledgements}
+
+Many thanks to Simone Landini, Nizar Mansour, Fabio Pammolli, Enrico Scalas, and Federico Tedeschi for precious discussions, insights, and critics. The usual disclaimer applies.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A P P E N D I X
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Appendix: Analyzing examples of contagion sequences}
+\label{appContagion}
+
+
+We introduce nine cases, mainly as examples. For technical details, look at Appendix \ref{appHowItWorks}. Among those cases, we have the set of sequences commented in Section \ref{seqSuggPol}, which are a special source of suggestions for policies. Still, other suggestions can emerge by observing the other sequences reported here or that can be generated. Each run of the program produces a different sequence that can be analyzed, as explained in the Appendix, using the program at \url{https://github.com/terna/contagionSequence}.
+
+Notice that, with containment measures, sometimes the sequences get thinner, involving few agents. 
+Then, they can start again or---with a bit of luck---stop. A typical situation is that of Fig. \ref{0} where, on day 43, we have a unique spreading agent (that became infected in a nursing home, so orange). The agent continues the infection, with two further contagions (looking into the simulation run's details, this agent is a nursing home operator). Without the containment measures, the flow of the contagions is ample, excluding the situation of Figs. \ref{4a} and \ref{4b} where, in the beginning, the epidemic seems not to start.
+
+The agents starting the infection correspond to the two black segments in each picture's bottom left corner. They are  \emph{coming from nowhere}, as external events. The evolution of each simulation is strongly influenced by randomness, as in reality: the New York Times of March \nth{5}, 2020, offered us since the beginning, a non-conventional analysis on  
+\href{https://www.nytimes.com/2020/05/03/world/asia/coronavirus-spread-where-why.html}{<<The Covid-19 Riddle: Why Does the Virus Wallop Some Places and Spare Others?>>}. The title of the last paragraph is <<Roll of the Dice>> and starts with:
+
+\begin{quote}
+Finally, most experts agree that there may be no single reason for some countries to be hit and others missed. The answer is likely to be some combination of the above factors, as well as one other mentioned by researchers: sheer luck.
+
+Countries with the same culture and climate could have vastly different outcomes if one infected person attends a crowded social occasion, turning it into what researchers call a super-spreader event.
+\end{quote}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{How to analyze the figures of this section}
+\label{howToAnalyze}
+
+How the figures of this appendix work: refer as an example to Fig. \ref{2}, related to a simulation of a very short duration. We have a few infected people there, so the graphical representation is detailed without the need to enlarge the picture, which is always possible if you use the article's pdf file.
+
+We start with two externally infected people, represented by the two black segments in the picture's bottom-left corner. The segments' length means each subject's infection period; these are asymptomatic (dashed lines, refer to Appendix \ref{appHowItWorks}). The first one is a regular agent (as the thickness suggests). The second one is a robust agent; by convention, we introduce them in the simulation at the end of the incubation period. The first agent transmits (follow the vertical link) the contagion to another regular agent in a workplace (brown color); the second is not producing contagions. The third agent, asymptomatic after the incubation period (dotted line), infects four agents: three in the workplace (two of them fragile, as we see from the thickness of the line), and the last one (a fragile person) at home (cyan). The sequence continues until the \nth{24} agent, infected in a hospital, infecting no one in turn.
+
+We have to remember that we work here on a scale of 1:1000. Still, in interpreting these sequences, it is worth considering the agent to agent transmission as examples of events related to single persons.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Epidemics without containment measures}
+
+The cases of Sections \ref{c1}, \ref{c2}, and \ref {c3} report simulation without any kind of non-pharmaceutical measures.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Case 1: workplaces, nursing homes, and homes}
+\label{c1}
+
+The epidemic in Fig. \ref{3a} lasted about 350 days and affected about 2,500 people on a total of 4,350(in the 1:1,000 scale). In the beginning, the leading presence is that of contagions in nursing homes (orange) and in workplaces (brown), but successively a significant role is that of the contagions at home (cyan); some effect is coming from hospitals. We can better understand the starting sequence in Fig. \ref{3b}, where we report only the first 200 contagion cases.
+  
+\begin{comment}
+
+this is a memo on the order of sources, explaining numbers
+
+                           using SIsaR 9.4.2 as is (basic control) with 123456_22313
+withShort0.png   ex123456_22313.csv
+withShort1.png   ex123456_22314.csv
+withShort2.png   ex123456_22315.csv
+
+                           using SIsaR 9.4.2 (basic control + 20 sFW 1,i.e., stop Fragile Workers)  with 123456_22314
+withShort1A.png ex123456_22314A.csv
+withShort1A200.png 
+
+                           using SIsaR 9.4.2 (basic control + $$$)  with 123456_22314                           
+ 								$$$
+								15 sFW 1     NB at 15
+								15 limlock 1
+								15 %PeopleAny 0  NB stop fragile at 15
+								15 %PeopleNot 90
+								15 PvNH 0   NB at 15 stop visist
+								28 %PeopleNot 80
+withShort1B.png ex123456_22314B.csv
+
+          		 from 'SIsaR_0.9.4.1tmp experiments 2 seeds no control-table_5000.csv'
+no3a.png	        	 noControl_10932215_10933923.csv
+no3b.png
+no4a.png           noControl_12518034_12520144.csv
+no4b.png
+no5a.png           noControl_13790741_13792228.csv
+no5b.png
+
+                          from 'SIsaR_0.9.4.1 experiments 2 seeds with control-table_10000.csv'
+with6a.png        withControl_268411_270578.csv
+with6b.png
+with7a.png        withControl_2722110_2723664.csv
+with7b.png
+with8a.png        withControl_473323_474697.csv
+with8b.png
+
+\end{comment}
+
+
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{no3a.png} % no control case 10932215 10933923 in SIsaR_0.9.4.1tmp experiments 2 seeds no control-table_5000.csv, file noControl_10932215_10933923.csv
+\caption{Case 1, without containment measures: contagions in nursing homes (orange), workplaces (brown), homes (cyan), hospitals (pink)}
+\label{3a}
+\end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{no3b.png} % no control case 10932215_10933923 in SIsaR_0.9.4.1tmp experiments 2 seeds no control-table_5000.csv, file noControl_10932215_10933923.csv
+\caption{Case 1, without containment measures, first 200 infections with the main contribution of nursing homes (orange) and workplaces (brown)}
+\label{3b}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Case 2: multiple sources of infection}
+\label{c2}
+
+In Fig.~\ref{4a}, we have another history of contagion without control---always with everything open, including schools---with the epidemic that alternates contagions at home (cyan), in hospitals (pink). in the workplaces (brown), with a decisive initial role of nursing homes (orange), as shown in Fig. \ref{4b}, which enlarges the first 200 cases. There is also a bit of school contribution, but very limited. Around day 70, a unique contagion at home has the role of having the epidemic continuing.
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{no4a.png}% no control case 12518034 12520144 in SIsaR_0.9.4.1tmp experiments 2 seeds no control-table_5000.csv, file noControl_12518034_12520144.csv
+
+\caption{Case 2, without containment measures: nursing homes (orange) as starter}
+\label{4a}
+\end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{no4b.png}% no control case 12518034 12520144 in SIsaR_0.9.4.1tmp experiments 2 seeds no control-table_5000.csv, filee noControl_12518034_12520144.csv
+
+\caption{Case 2, without containment measures, first 200 infections: nursing homes (orange) as starter and around day 70 a unique contagion at home continuing the epidemic}
+\label{4b}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Case 3: workplaces and homes}
+\label{c3}
+
+Without containment measures: an initial deep effect of contagions is in workplaces and at home, both in Fig. \ref{5a} and very clearly in Fig. \ref{5b}, where workplace and home effects are interleaving. Analyzing the dimension and the style (solid or dashed, as in Section \ref{lineStyle}) of the segments representing the agents infected in the early phase, we observe\footnote{To better observe, it is possible to enlarge the picture in the pdf version of the article.} the role of fragile agents, also asymptomatic (dashed segments).
+
+
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{no5a.png}% no control case 113790741 13792228 in SIsaR_0.9.4.1tmp experiments 2 seeds no control-table_5000.csv, file noControl_13790741 13792228.csv
+\caption{Case 3, without containment measures: an initial deep effect of contagions in workplaces (brown) and homes (cyan)}
+\label{5a}
+\end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{no5b.png}% no control case 113790741 13792228 in SIsaR_0.9.4.1tmp experiments 2 seeds no control-table_5000.csv, file noControl_13790741 13792228.csv
+\caption{Case 3, without containment measures, first 200 infections: the initial deep effect of contagions in workplaces (brown) and homes is due in the initial steps to fragile persons, also asymptomatic}
+\label{5b}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Cases with containment measures}
+
+The cases of Sections \ref{c4}, \ref{c5}, and \ref {c6} report simulation incorporating the non-pharmaceutical measures of the calendar in Appendix \ref{AppCalendar}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Case 4, again the importance of workplaces (brown) and homes (cyan)}
+\label{c4}
+
+We adopt here the non-pharmaceutical measures of the calendar in Appendix \ref{appCalendar}. The school is always close also in September. 
+In Figs. \ref{6a} and \ref{6b}, we again can verify the importance of the workplaces and homes in diffusing the infection, with the critical signal, in Fig. \ref{6b}, of many cases of fragile workers diffusing the disease.
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{with6a.png}% with control case 268411 270578 in SIsaR_0.9.4.1 experiments 2 seeds with control-table_10000.csv, file withControl_268411_270578.csv
+\caption{Case 4, with containment measures: another case of strong contribution of workplaces (brown) and homes (cyan) to epidemic diffusion}
+\label{6a}
+\end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{with6b.png}% with control case 268411 270578 in SIsaR_0.9.4.1 experiments 2 seeds with control-table_10000.csv, file withControl_268411_270578.csv
+\caption{Case 4, with containment measures, first 200 infections: after day 100 we observe many significant cases of fragile workers diffusing the infection}
+\label{6b}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Case 5, with workplaces (brown), hospitals (pink), nursing homes (orange) and homes (cyan), then workplaces (brown)}
+\label{c5}
+
+In this case, we have a sequence of highly interlaced different contagion places.
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{with7a.png}% with control case 2722110 2723664 in SIsaR_0.9.4.1 experiments 2 seeds with control-table_10000.csv, file withControl_2722110_2723664.csv
+\caption{Case 5, with containment measures: workplaces (brown), hospitals (pink), nursing homes (orange) and homes (cyan), then workplaces}
+\label{7a}
+\end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{with7b.png}% with control case 2722110 2723664 in SIsaR_0.9.4.1 experiments 2 seeds with control-table_10000.csv, file withControl_2722110_2723664.csv
+\caption{Case 5, with containment measures, first 200 infections: in the beginning workplaces (brown), hospitals (pink), nursing homes (orange) and homes (cyan) interweaving}
+\label{7b}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Case 6, with workplaces (brown) and nursing homes (orange)}
+\label{c6}
+
+
+In this case, nursing homes' initial role is evident, with a large number of extra-fragile people infected as symptomatic. Looking at the vertical links, we see in Fig. \ref{8b} them frequently coming from fragile or extra-fragile people (the last ones, infected in a nursing home, so orange).
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{with8a.png}% with control case 473323 474697 in SIsaR_0.9.4.1 experiments 2 seeds with control-table_10000.csv, file withControl_473323_474697.csv
+\caption{Case 6, with containment measures: workplaces (brown), nursing homes (orange), homes (cyan)}
+\label{8a}
+\end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{with8b.png}% with control case 473323 474697 in SIsaR_0.9.4.1 experiments 2 seeds with control-table_10000.csv, file withControl_473323_474697.csv
+\caption{Case 6, with containment measures, first 200 infections: workplaces (brown) and nursing homes (orange) strictly interweaving}
+\label{8b}
+\end{center}
+\end{figure}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Short running epidemic, with containment measures}
+
+The cases of Sections \ref{c7}, \ref{c8}, and \ref {c9} report simulation with short duration, incorporating the non-pharmaceutical measures of the calendar in Appendix \ref{appCalendar}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Case 7, only nursing homes (orange)}
+\label{c7}
+
+In Fig. \ref{0} we have an extreme epidemic situation, involving uniquely the nursing homes.
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{withShort0.png}%using SIsaR 9.4.2 as is (basic control) with 123456_22313, file ex123456_22313.csv
+\caption{Case 7, with containment measures: the effect of nursing homes (orange)}
+\label{0}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Case 8 with workers and control of fragility in two steps}
+\label{c8}
+
+
+The analysis of the sequences of contagion in this appendix makes evident the relevance of fragility, in workplaces and nursing homes, to sustain the diffusion of the SARS-CoV-2 virus. It suggests the importance of considering together two different views: that of the defense of the health of every single person, especially if fragile, and that of the protection of collective health.
+
+The document 
+<<Economic Aspects of the COVID-19 Crisis in the UK>>\footnote{\url{https://rs-delve.github.io/reports/2020/08/14/economic-aspects-of-the-covid19-crisis-in-the-uk.html}.}
+of the DELVE initiative\footnote{DELVE---Data Evaluation and Learning for Viral Epidemics---is a multi-disciplinary group, convened by the Royal Society, to support a data-driven approach to learning from the different approaches countries are taking to managing the covid-19 pandemic. \url{https://rs-delve.github.io}.}
+dedicates special attention to work conditions in virus spreading and the problems related to workers' preventive or immediate isolation, both fragile or with early mild symptoms.
+
+\begin{quote}
+Current sick pay arrangements create a financial disincentive to self-isolate, with half of workers continuing to work through mild coronavirus symptoms, which in turn makes it more difficult to control transmission. Reviewing statutory sick pay could help incentivise those with symptoms to self-isolate.
+
+(\ldots)
+
+Low-earning workers are also in jobs that tend to be harder to perform remotely, increasing their risk of unemployment or infection in the workplace, if mitigating steps are not taken.
+\end{quote}
+
+The proposal here is to devote maximum preventive attention to fragile workers, leaving them home with sick pays (in reality, a part of the would work remotely from home). This situation is different from limiting fragile people's movements because it is mainly related to ages more advanced than those of the workers. Besides, that kind of decision allows people to move to go to the workplace. 
+
+Intervention policies must properly design this non-pharmaceutical contention measure, defining the sick pay and the related rules with modalities and levels adequate to avoid the problems quoted above.
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{withShort1.png}%using SIsaR 9.4.2 as is (basic control) with 123456_22314
+\caption{Case 8, with containment measures: a highly significant effect of workplaces (brown)}
+\label{1}
+\end{center}
+\end{figure}
+
+
+In Fig. \ref{1} we have the first of the four pictures already seen in Section \ref{seqSuggPol}. It is a case in which the workplace's effect as an elective area of contagion is powerful. The epidemic lasts around 170 days. We introduce a further containment measure to the regular ones (those of Appendix \ref{appCalendar}). From the \nth{20} day of the simulated period, fragile workers are no more participating in work activity (into our simulated Piedmont, they correspond to a quota of around the 5\% of the whole population). The effect, in Fig. \ref{1A} is very positive in stopping the initial workplace action, but a series of home contagions restarts the epidemic, again in workplaces. As we see in Fig. \ref{1B}, here we have the effect of an unlucky circumstance: that of a unique agent, infected at home, again spreading the infection in the workplaces. We show this event to confirm the high variability in epidemic developments. Considering batches of 1,000 simulations, as in Section \ref{EpidemicsFWsS}, the positive effect of the proposed measure is well evident.
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{withShort1A.png}%using SIsaR 9.4.2 as is (basic control + 20 sFW 1,i.e., stop Fragile Workers) with 123456_22314
+\caption{Case 8, with containment measures, stopping fragile workers at day 20, with a positive result, but home contagions (cyan) keep alive the pandemic, which explodes again in workplaces (brown)}
+\label{1A}
+\end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{withShort1A200.png}%using SIsaR 9.4.2 as is (basic control + 20 sFW 1,i.e., stop Fragile Workers) with 123456_22314
+\caption{Case 8, with containment measures, stopping fragile workers at day 20, with a positive effect, but home contagions (cyan) keep alive the pandemic, which explodes again in workplaces (brown), first 200 infections with evidence of the event around day 110 with the new phase due to a unique asymptomatic worker}
+\label{1A200}
+\end{center}
+\end{figure}
+
+As a most substantial measure, we try a general stop of any fragility since the \nth{15} day of the simulated period. The positive effect is evident in Fig. \ref{1B}, with a short-lasting epidemics, affecting few people. A note: in the batch analysis of Appendix \ref{app1000run}, we always use the \nth{20} day as a turning point.
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{withShort1B.png}%using SIsaR 9.4.2 as is (basic control + $$$) with 123456_22314
+\caption{Case 8, with containment measures, stopping fragile workers and any case of fragility at day 15, also isolating nursing homes}
+\label{1B}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Case 9, a spontaneously stopping epidemic}
+\label{c9}
+
+To finish this series of examples, in Fig. \ref{2} we show the case of an epidemic spontaneously stopping quickly, using the regular non-pharmaceutical containment measures.
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{withShort2.png}%using SIsaR 9.4.2 as is (basic control) with 123456_22315, file ex123456_22315.csv
+\caption{Case 9, with containment measures: a spontaneously stopping epidemic in  short period}
+\label{2}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Appendix: batches of 1,000 simulated experiments generating data for policy proposals}
+\label{app1000run}
+
+To systematically explore the results of the different simulations, taking into account the variability of the outcomes, we produce batches of 1,000 runs via the tool \verb|BehaviorSpace| of NetLogo. \verb|BehaviorSpace| creates \verb|csv| files that we analyze with the programs at 
+\url{https://github.com/terna/readSIsaR_BatchResults}. The different titles correspond to those of this appendix; it is also possible to run the codes directly from there.
+
+We report here the results of the calculations, both as descriptive statistics and as heat-maps. A heat-map is a double histogram; in our application, it displays each simulated epidemic's duration in the $x$ axis and the count of the symptomatic, asymptomatic, and deceased agents in the $y$ axis. The cells contain the number of cases. The data are always on a scale 1:1000.
+
+The descriptive statistics are about: the total number of symptomatic subjects in nursing homes, the total number of symptomatic subjects, the total number of symptomatic-asymptomatic-deceased subjects, the duration of the epidemic.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Epidemics without containment measures}
+\label{EpidemicsWithoutControlS}
+
+Here we are without any control, and the school always open. The values of Table \ref{EpidemicsWithoutControlT} are scary, and the concentration of the cases in the heat-map of Fig. \ref{EpidemicsWithoutControlHM} shows that, except a few instances spontaneously concluding in a short period (left bottom corner), we have a heavy \emph{cloud}\footnote{In the 2020 Summer, in the mountain, one of the authors saw the cloud configuration reporte at \url{https://terna.to.it/simul/HeatmapInTheCloud.png}; a curious coincidence.} of cases lasting one year or one year and a half, hitting (as symptomatic, asymptomatic and deceased) from 2.400 to 3,200 people on a total of 4,350.
+
+The calculations of this Section are reported synthetically in Section \ref{keyResultsS} and in the related Table \ref{keyResultsT}.
+
+\begin{table}[t]
+\center
+\small
+\begin{tabular}{lrrrr}
+\hline\noalign{\smallskip}
+{} & total sym.        &  total sym. & total sym.     & days~~~~ \\
+{} & in nursing        &                  & asympt.~~~  & \\
+{} & homes~~~~~  &                  & deceased~~ & \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+count &     962.00 &             1000.00 &                 1000.00 & 1000.00 \\
+mean  &       4.65 &              851.12 &                 2253.48 &  340.10 \\
+std   &       7.89 &              288.52 &                  767.58 &  110.21 \\
+min   &       0.00 &                0.00 &                    2.00 &   12.00 \\
+25\%   &       0.00 &              849.00 &                 2246.75 &  317.00 \\
+50\%   &       0.00 &              924.00 &                 2442.00 &  357.00 \\
+75\%   &       8.00 &              998.00 &                 2639.25 &  399.25 \\
+max   &      54.00 &             1240.00 &                 3592.00 &  638.00 \\
+\hline\noalign{\smallskip}
+\end{tabular}
+
+\label{EpidemicsWithoutControlT}
+\caption{Epidemics without containment measures}
+\end{table}
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{HM30_readRunResults1k_noControl_plusHMlog.png}
+\caption{Epidemics without containment measures (logarithmic scale for colors)}
+\label{EpidemicsWithoutControlHM}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Epidemics with basic non-pharmaceutical containment measures, no school in September 2020}
+\label{EpidemicsWithAndNoSchoolS}
+
+We follow here the calendar of controls of Appendix \ref{appCalendar}. Comparing the values of Table \ref{EpidemicsWithAndNoSchoolT} with those of Table \ref{EpidemicsWithoutControlT} we measure a strong difference. The content of Fig. \ref{EpidemicsWithAndNoSchoolT} shows the variability of results; most of all, a completely different distribution of the events if compared with Fig. \ref{EpidemicsWithAndNoSchoolT}. School is always closed in this simulation.
+
+As in Section \ref{keyResultsS} we have here the possibility referring to actual Piedmont, where the curve of the symptomatic cases flattened with the end of May, with around 30 thousand subjects; with that datum, the region is included in the cell in the first row, immediately to the right of the mode in Fig. \ref{EpidemicsWithAndNoSchoolHM}, considering that here we have to triplicate the number symptomatic subject to obtain the full measure of infected agents.
+
+
+\begin{table}[t]
+\center
+\small
+\begin{tabular}{lrrrr}
+\hline\noalign{\smallskip}
+{} & total sym.        &  total sym. & total sym.     & days~~~~ \\
+{} & in nursing        &                  & asympt.~~~  & \\
+{} & homes~~~~~  &                  & deceased~~ & \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+count &     946.00 &             1000.00 &                 1000.00 & 1000.00 \\
+mean  &       4.51 &              158.55 &                  416.98 &  196.97 \\
+std   &       7.39 &              174.10 &                  462.94 &  131.18 \\
+min   &       0.00 &                0.00 &                    2.00 &   12.00 \\
+25\%   &       0.00 &                9.75 &                   20.00 &   89.75 \\
+50\%   &       0.00 &               82.00 &                  219.00 &  154.00 \\
+75\%   &       8.00 &              287.00 &                  778.75 &  298.00 \\
+max   &      46.00 &              749.00 &                 1916.00 &  611.00 \\
+\hline\noalign{\smallskip}
+\end{tabular}
+
+\label{EpidemicsWithAndNoSchoolT}
+\caption{Epidemics with basic non-pharmaceutical containment measures, no school in September 2020}
+\end{table}
+
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{HM30_readRunResults1k_withControl_plusHMlog.png}
+\caption{Epidemics with basic non-pharmaceutical containment measures, no school in September 2020 (logarithmic scale for colors)}
+\label{EpidemicsWithAndNoSchoolHM}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+subsection{Epidemics with basic non-pharmaceutical containment measures, school open in September 2020}
+\label{EpidemicsWithAndSchoolS}
+
+
+What if the school would be open in September? We note some reduction of the infections in Table \ref{EpidemicsWithAndSchoolT}, maybe because concentrating the student in schools for a part of the day, we have fewer people around. The same observation holds for Section \ref{EpidemicsNoAllFragileFacsOnSchOnS}.
+
+\begin{table}[t]
+\center
+\small
+\begin{tabular}{lrrrr}
+\hline\noalign{\smallskip}
+{} & total sym.        &  total sym. & total sym.     & days~~~~ \\
+{} & in nursing        &                  & asympt.~~~  & \\
+{} & homes~~~~~  &                  & deceased~~ & \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+count &     946.00 &             1000.00 &                 1000.00 & 1000.00 \\
+mean  &       4.24 &              153.71 &                  409.73 &  199.35 \\
+std   &       7.29 &              168.55 &                  454.12 &  129.00 \\
+min   &       0.00 &                0.00 &                    2.00 &   13.00 \\
+25\%   &       0.00 &                9.00 &                   18.75 &   95.00 \\
+50\%   &       0.00 &               81.50 &                  231.50 &  154.00 \\
+75\%   &       6.00 &              269.50 &                  770.00 &  309.25 \\
+max   &      42.00 &              738.00 &                 1907.00 &  617.00 \\
+\hline\noalign{\smallskip}
+\end{tabular}
+
+\label{EpidemicsWithAndSchoolT}
+\caption{Epidemics with basic non-pharmaceutical containment measures, schools open in September 2020}
+\end{table}
+
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{HM30_readRunResults1k_basicControl_schoolOpenSept_plusHMlog.png}
+\caption{Epidemics with basic non-pharmaceutical containment measures, schools open in September 2020 (logarithmic scale for colors)}
+\label{EpidemicsWithAndSchoolHM}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Epidemics with immediate stop of fragile workers, non-pharmaceutical containment measures, no school in September 2020}
+\label{EpidemicsFWsS}
+
+
+In Table \ref{EpidemicsFWsT} and in Fig. \ref{EpidemicsFWsHM} we verify with a batch of 1,000 runs the analysis of Sections \ref{seqSuggPol} and \ref{c7}. The verification of the strategy of stopping fragile workers with the epidemic early warnings, here at February \nth{20}, gives a significant reduction of the infected people and the simulation duration. Anticipating the stop on February \nth{15}, only some limited advantages are emerging.
+
+\begin{table}[t]
+\center
+\small
+\begin{tabular}{lrrrr}
+\hline\noalign{\smallskip}
+{} & total sym.        &  total sym. & total sym.     & days~~~~ \\
+{} & in nursing        &                  & asympt.~~~  & \\
+{} & homes~~~~~  &                  & deceased~~ & \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+count &     955.00 &             1000.00 &                 1000.00 & 1000.00 \\
+mean  &       4.32 &              120.17 &                  334.68 &  181.10 \\
+std   &       7.48 &              149.10 &                  413.90 &  125.46 \\
+min   &       0.00 &                0.00 &                    2.00 &   13.00 \\
+25\%   &       0.00 &                8.00 &                   17.00 &   86.00 \\
+50\%   &       0.00 &               41.00 &                   94.00 &  136.00 \\
+75\%   &       6.00 &              210.00 &                  586.25 &  267.25 \\
+max   &      44.00 &              745.00 &                 2043.00 &  746.00 \\
+\hline\noalign{\smallskip}
+\end{tabular}
+
+\label{EpidemicsFWsT}
+\caption{Epidemics with the immediate stop of fragile workers, non-pharmaceutical containment measures, no school in September 2020}
+\end{table}
+
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{HM30_readRunResults1k_with_sFW_at20_plusHMlog.png}
+\caption{Epidemics with the immediate stop of fragile workers, non-pharmaceutical containment measures, no school in September 2020 (logarithmic scale for colors)}
+\label{EpidemicsFWsHM}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Epidemics with absolute isolation of nursing homes, non-pharmaceutical containment measures, no school in September 2020}
+\label{EpidemicsNHsS}
+
+As explained in Section \ref{keyResultsS} commenting the Table \ref{keyResultsT}, some strategies are separately explored. If considered separately, each one gives positive but limited results. 
+
+First trial: we put in action the prohibition of the visits to the nursing homes and the isolation of the related operators, plus creating a buffer zone segregating nursing homes and hospitals. No school in September.
+
+\begin{table}[t]
+\center
+\small
+\begin{tabular}{lrrrr}
+\hline\noalign{\smallskip}
+{} & total sym.        &  total sym. & total sym.     & days~~~~ \\
+{} & in nursing        &                  & asympt.~~~  & \\
+{} & homes~~~~~  &                  & deceased~~ & \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+count &     955.00 &             1000.00 &                 1000.00 & 1000.00 \\
+mean  &       3.41 &              150.53 &                  408.08 &  201.76 \\
+std   &       6.88 &              172.48 &                  467.54 &  138.15 \\
+min   &       0.00 &                0.00 &                    2.00 &   12.00 \\
+25\%   &       0.00 &                8.00 &                   18.00 &   89.00 \\
+50\%   &       0.00 &               70.00 &                  196.00 &  147.50 \\
+75\%   &       0.00 &              268.25 &                  756.50 &  312.25 \\
+max   &      47.00 &              737.00 &                 1977.00 &  695.00 \\
+\hline\noalign{\smallskip}
+\end{tabular}
+
+\label{EpidemicsNHsT}
+\caption{Epidemics with the absolute isolation of nursing homes, non-pharmaceutical containment measures, no school in September 2020}
+\end{table}
+
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{HM30_readRunResults1k_with_NH_OP_BZ_at20_plusHMlog.png}
+\caption{Epidemics with the absolute isolation of nursing homes, non-pharmaceutical containment measures, no school in September 2020 (logarithmic scale for colors)}
+\label{EpidemicsNHsHM}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Epidemics stopping fragile people, non-pharmaceutical containment measures, no school in September 2020}
+\label{EpidemicsFragileS}
+
+
+Second trial: we lock fragile people at home, but the fragile workers continue their activity?no school in September..
+
+\begin{table}[t]
+\center
+\small
+\begin{tabular}{lrrrr}
+\hline\noalign{\smallskip}
+{} & total sym.        &  total sym. & total sym.     & days~~~~ \\
+{} & in nursing        &                  & asympt.~~~  & \\
+{} & homes~~~~~  &                  & deceased~~ & \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+count &     952.00 &             1000.00 &                 1000.00 & 1000.00 \\
+mean  &       4.38 &              154.15 &                  408.50 &  195.81 \\
+std   &       7.52 &              170.22 &                  456.08 &  129.52 \\
+min   &       0.00 &                0.00 &                    2.00 &   14.00 \\
+25\%   &       0.00 &                9.00 &                   19.00 &   90.00 \\
+50\%   &       0.00 &               93.50 &                  251.00 &  154.50 \\
+75\%   &       7.25 &              264.25 &                  747.50 &  294.00 \\
+max   &      57.00 &              820.00 &                 2079.00 &  660.00 \\
+\hline\noalign{\smallskip}
+\end{tabular}
+
+\label{EpidemicsFragileT}
+\caption{Epidemics limiting fragile people mobility, non-pharmaceutical containment measures, no school in September 2020}
+\end{table}
+
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{HM30_readRunResults1k_with_Frag_at20_plusHMlog.png}
+\caption{Epidemics limiting fragile people mobility, non-pharmaceutical containment measures, no school in September 2020 (logarithmic scale for colors)}
+\label{EpidemicsFragileHM}
+\end{center}
+\end{figure}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Epidemics excluding fragility of any type, non-pharmaceutical containment measures, no school in September 2020}
+\label{EpidemicsNoAllFragileS}
+
+We put in action together all the limitations of Sections \ref{EpidemicsFWsS}, \ref{EpidemicsNHsS}, and \ref{EpidemicsFragileS}. The school is closed in September. The reduction of the infected people and of the duration, in Table \ref{EpidemicsNoAllFragileT} and in Fig. \ref{EpidemicsNoAllFragileHM}, are relevant, representing the best result obtained.
+
+
+\begin{table}[t]
+\center
+\small
+\begin{tabular}{lrrrr}
+\hline\noalign{\smallskip}
+{} & total sym.        &  total sym. & total sym.     & days~~~~ \\
+{} & in nursing        &                  & asympt.~~~  & \\
+{} & homes~~~~~  &                  & deceased~~ & \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+count &     947.00 &             1000.00 &                 1000.00 & 1000.00 \\
+mean  &       3.25 &              105.63 &                  302.62 &  174.39 \\
+std   &       6.60 &              134.80 &                  382.14 &  121.82 \\
+min   &       0.00 &                0.00 &                    2.00 &   12.00 \\
+25\%   &       0.00 &                8.00 &                   17.00 &   84.75 \\
+50\%   &       0.00 &               37.50 &                   84.00 &  131.00 \\
+75\%   &       0.00 &              173.00 &                  515.50 &  252.25 \\
+max   &      40.00 &              728.00 &                 1844.00 &  651.00 \\
+\hline\noalign{\smallskip}
+\end{tabular}
+
+\label{EpidemicsNoAllFragileT}
+\caption{Epidemics excluding fragility of any type, non-pharmaceutical containment measures, no school in September 2020}
+\end{table}
+
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{HM30_readRunResults1k_with_NoAllFrag_at20_plusHMlog.png}
+\caption{Epidemics excluding fragility of any type, non-pharmaceutical containment measures, no school in September 2020 (logarithmic scale for colors)}
+\label{EpidemicsNoAllFragileHM}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Epidemics excluding fragility of any type, non-pharmaceutical containment measures, factories open, no school in September 2020}
+\label{EpidemicsNoAllFragileFacsOnS}
+
+We confirm the setting of Section \ref{EpidemicsNoAllFragileS}, but now with the factories (shops, offices, etc.) always open. The results are acceptable.
+
+\begin{table}[t]
+\center
+\small
+\begin{tabular}{lrrrr}
+\hline\noalign{\smallskip}
+{} & total sym.        &  total sym. & total sym.     & days~~~~ \\
+{} & in nursing        &                  & asympt.~~~  & \\
+{} & homes~~~~~  &                  & deceased~~ & \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+count &     960.00 &             1000.00 &                 1000.00 & 1000.00 \\
+mean  &       3.46 &              124.10 &                  397.05 &  200.31 \\
+std   &       6.65 &              132.42 &                  399.64 &  121.46 \\
+min   &       0.00 &                0.00 &                    2.00 &   14.00 \\
+25\%   &       0.00 &                9.00 &                   19.00 &   95.75 \\
+50\%   &       0.00 &               85.00 &                  279.00 &  188.00 \\
+75\%   &       5.00 &              202.25 &                  707.00 &  284.00 \\
+max   &      41.00 &              868.00 &                 2140.00 &  714.00 \\
+\hline\noalign{\smallskip}
+\end{tabular}
+
+\label{EpidemicsNoAllFragileFacsOnT}
+\caption{Epidemics excluding fragility of any tyoe, non-pharmaceutical containment measures, with factories open, no school in September 2020}
+\end{table}
+
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{HM30_readRunResults1k_with_NoAllFrag_openFacs_at20_plusHMlog.png}
+\caption{Epidemics excluding fragility of any type, non-pharmaceutical containment measures, with factories open, no school in September 2020 (logarithmic scale for colors)}
+\label{EpidemicsNoAllFragileFacsOnHM}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Epidemics excluding fragility of any type, non-pharmaceutical containment measures, factories open, schools open in September 2020}
+\label{EpidemicsNoAllFragileFacsOnSchOnS}
+
+Finally, to the setting of Section \ref{EpidemicsNoAllFragileFacsOnS}, we add the decision of opening the schools in September. The results are acceptable, with a slight improvement, already noticed in Section \ref{EpidemicsWithAndSchoolS}.
+
+\begin{table}[t]
+\center
+\small
+\begin{tabular}{lrrrr}
+\hline\noalign{\smallskip}
+{} & total sym.        &  total sym. & total sym.     & days~~~~ \\
+{} & in nursing        &                  & asympt.~~~  & \\
+{} & homes~~~~~  &                  & deceased~~ & \\
+\noalign{\smallskip}\svhline\noalign{\smallskip}
+count &     949.00 &             1000.00 &                 1000.00 & 1000.00 \\
+mean  &       3.63 &              116.55 &                  374.68 &  195.28 \\
+std   &       6.96 &              130.91 &                  394.66 &  119.33 \\
+min   &       0.00 &                0.00 &                    2.00 &   12.00 \\
+25\%   &       0.00 &                9.00 &                   20.00 &   91.00 \\
+50\%   &       0.00 &               68.00 &                  225.00 &  180.50 \\
+75\%   &       5.00 &              186.00 &                  651.50 &  275.25 \\
+max   &      45.00 &              665.00 &                 1844.00 &  666.00 \\
+\hline\noalign{\smallskip}
+\end{tabular}
+
+\label{EpidemicsNoAllFragileFacsOnSchOnT}
+\caption{Epidemics excluding fragility of any type, non-pharmaceutical containment measures, factories open, schools open in September 2020}
+\end{table}
+
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{HM30_readRunResults1k_with_NoAllFrag_openFacs_at20_openSchoolSep_plusHMlog.png}
+\caption{Epidemics excluding fragility of any type, non-pharmaceutical containment measures, factories open, schools open in September 2020 (logarithmic scale for colors)}
+\label{EpidemicsNoAllFragileFacsOnSchOnHM}
+\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Appendix: How the visualization of contagion sequences works}
+\label{appHowItWorks}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The data}
+
+With each new infection, we add a record to a file. Each record contains:
+\begin{enumerate}\addtocounter{enumi}{-1}
+\setlength{\itemsep}{0pt}
+\item the ID of the agent transmitting the contagion (for the initial cases, externally generated, the ID has value -1);
+\item its contagion progressive number, starting from 1 (for the initial cases, externally generated, this value is 0);
+\item the conventional color of the place where it turned infected, following the NetLogo color swatches (for the externally generated initial cases, this value is 0);
+\item the ID of the agent receiving the contagion;
+\item its fragility rate (1 - robust; 2 - regular; 3 - fragile; 4 - extra fragile);
+\item its contagion progressive number;
+\item the conventional color of the place where it is turning infected, following the NetLogo color swatches;
+\item the day (tick) of the contagion (for the initial cases, externally generated, this value is 0);
+\item the starting infection day, i.e., the previous value plus the incubationPeriod (for the externally generated initial cases, the starting infection value is 0);
+\item the day of the conclusion of the infection, i.e., the previous value plus a value between the minInfectionDuration and the maxInfectionDuration settings; this period stops if the agent deceases, but we do not consider that possibility here;
+\item the symptomatic (1) or asymptomatic (2) status.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The plot}
+\label{lineStyle}
+
+Into the plots, each agent is represented by a horizontal line, starting at $x_1$ (date of the contagion, value 7 above) and finishing at $x_2$ (time of recover, value 9 above). 
+
+The line is \emph{dotted} in the incubation phase (until value 8 above), then \emph{solid} for symptomatic cases or \emph{dashed} for asymptomatic ones. 
+
+The line color is set by value 6 above. The line thickness is set by the value 4 above, with the scale: 1 robust, 2 regular, 3 fragile, 4 extra-fragile.
+
+The position on y-axes is that of value 5 above. 
+
+Using data 1, 2, 5 and 7, we plot a vertical line with: the contagion date as x position (value 7 above); the y1 position identifying the agent transmitting the contagion (value 1 above) and the y2 position identifying the agent receiving the contagion (value 5 above). The color is that of the transmitting agent.
+
+Using  datum 4, we define the thickness of the horizontal lines : robust (lw = 1); regular (lw = 2); fragile (lw = 3); extra-fragile (lw = 4)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The colors}
+\label{colors}
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\item   black = contagion by an external unidentified agent;
+\item    gray =  contagion in an empty or open space;
+\item    orange = contagion in a nursing home;
+\item    brown = contagion in a factory/office/shop;
+\item    yellow = contagion in a school;
+\item    cyan = contagion at home;
+\item    pink = contagion in a hospital.
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Appendix: The calendar}
+\label{appCalendar}
+
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+
+\item Day~1: conventionally, in the model the epidemic starts on Feb \nth{3}, 2020.
+
+\item Day~17: due to carnival holidays, schools close.
+
+\item Day~20: Piedmont Region first warning, with the prohibition of crowd gatherings.
+
+\item Day~35: limitation of movement outside local areas.
+
+\item Day~38: full lockdown on March \nth{11}.
+
+\item Day~49: almost total blockage of non-essential production activities.
+
+\item Day~84: reduction of the limitations.
+
+\item Day~106: elimination of a large part of the restrictions; schools always inactive.
+
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Appendix: Memo}
+\label{memo}
+
+Remember \href{https://github.com/epispot/epispot}{https://github.com/epispot/epispot} and its list of tools.
+
+
+
+
+\bibliography{./bibliografiaGenerale}
+\bibliographystyle{spphys}
+
+\end{document}
